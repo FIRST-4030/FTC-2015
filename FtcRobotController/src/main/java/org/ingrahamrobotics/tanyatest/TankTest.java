@@ -29,8 +29,8 @@ public class TankTest extends OpMode {
 		 *    "servo_1" controls the arm joint of the manipulator.
 		 *    "servo_6" controls the claw joint of the manipulator.
 		 */
-        motorRight = hardwareMap.dcMotor.get("motor_2");
-        motorLeft = hardwareMap.dcMotor.get("motor_1");
+        motorRight = hardwareMap.dcMotor.get("Right");
+        motorLeft = hardwareMap.dcMotor.get("Left");
         motorLeft.setDirection(DcMotor.Direction.REVERSE);
 
     }
