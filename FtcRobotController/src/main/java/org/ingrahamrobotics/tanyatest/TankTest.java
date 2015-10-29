@@ -46,13 +46,18 @@ public class TankTest extends OpMode {
 
         // tank drive
         // note that if y equal -1 then joystick is pushed all of the way forward.
-        float left = -gamepad1.left_stick_y;
-        float right = -gamepad1.right_stick_y;
+        float left = -gamepad2.left_stick_y;
+        float right = -gamepad2.right_stick_y;
+
+        telemetry.addData("G1LY", gamepad1.left_stick_x);
+        telemetry.addData("G1RY", gamepad1.right_stick_y);
+        telemetry.addData("G2LY", gamepad2.left_stick_x);
+        telemetry.addData("G2RY", gamepad2.right_stick_y);
 
         // clip the right/left values so that the values never exceed +/- 1
         right = Range.clip(right, -1, 1);
         left = Range.clip(left, -1, 1);
-        
+
         // write the values to the motors
         motorRight.setPower(right);
         motorLeft.setPower(left);
@@ -63,8 +68,6 @@ public class TankTest extends OpMode {
 		 * will return a null value. The legacy NXT-compatible motor controllers
 		 * are currently write only.
 		 */
-
-        telemetry.addData("Text", "*** Robot Data***");
         telemetry.addData("left tgt pwr",  "left  pwr: " + String.format("%.2f", left));
         telemetry.addData("right tgt pwr", "right pwr: " + String.format("%.2f", right));
     }
