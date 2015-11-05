@@ -15,7 +15,7 @@ public class TankTest extends OpMode {
     public void init() {
         motorRight = hardwareMap.dcMotor.get("Right");
         motorLeft = hardwareMap.dcMotor.get("Left");
-        motorLeft.setDirection(DcMotor.Direction.REVERSE);
+        motorRight.setDirection(DcMotor.Direction.REVERSE);
     }
 
     public void loop() {
@@ -30,6 +30,8 @@ public class TankTest extends OpMode {
         telemetry.addData("G2RY", gamepad2.right_stick_y);
         telemetry.addData("G1X", gamepad1.x);
         telemetry.addData("G2X", gamepad2.x);
+        telemetry.addData("EL", motorLeft.getCurrentPosition());
+        telemetry.addData("ER", motorRight.getCurrentPosition());
 
         // clip the right/left values so that the values never exceed +/- 1
         right = Range.clip(right, -1, 1);
