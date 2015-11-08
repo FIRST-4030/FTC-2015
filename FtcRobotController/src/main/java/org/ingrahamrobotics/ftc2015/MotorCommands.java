@@ -5,29 +5,48 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * Created by robotics on 11/6/2015.
  */
 public class MotorCommands {
-    DcMotor leftMotor = hardwareMap.dcMotor.get("Left");;
-    DcMotor rightMotor = hardwareMap.dcMotor.get("Right");;
-    public void setMotorSpeed(float speed) {
-        leftMotor.setSpeed(speed);
-        rightMotor.setSpeed(speed);
+
+    DcMotor leftMotor;
+    DcMotor rightMotor;
+
+    public MotorCommands(DcMotor left, DcMotor right) {
+        leftMotor = left;
+        rightMotor = right;
+        leftMotor.setDirection(DcMotor.Direction.REVERSE);
     }
+
+    public void setMotorPower(float power) {
+        leftMotor.setPower(power);
+        rightMotor.setPower(power);
+    }
+
+    public void stopDriveMotors() {
+        setMotorPower(0);
+    }
+
     public void driveToDistance(int distance) {
-        leftMotor.driveToDistance(distance);
-        rightMotor.driveToDistance(distance);
+        int leftGoal = leftMotor.getCurrentPosition() + distance;
+        int rightGoal = rightMotor.getCurrentPosition() + distance;
+        leftMotor.setTargetPosition(leftGoal);
+        rightMotor.setTargetPosition(rightGoal);
     }
-    public void setMotorTurn(double speed, boolean left) {
+
+    public void setMotorTurn(float power, boolean left) {
         if (left) {
-            leftMotor.setSpeed(-speed);
-            rightMotor.setSpeed(speed);
+            leftMotor.setPower(-power);
+            rightMotor.setPower(power);
         } else {
-            leftMotor.setSpeed(speed);
-            rightMotor.setSpeed(-speed);
+            leftMotor.setPower(power);
+            rightMotor.setPower(-power);
         }
     }
-    public void driveToSonar(int x, int speed) {
-        while (sonar.getValue()>x) {
-            setMotorSpeed(speed);
+
+    public void driveToSonar(int d, float power) {
+        while (sonar.getValue() > d) {
+            setMotorPower(power);
         }
-        setMotorSpeed(0);
+        stopDriveMotors();
     }
+
+    public void turnToAngle()
 }
