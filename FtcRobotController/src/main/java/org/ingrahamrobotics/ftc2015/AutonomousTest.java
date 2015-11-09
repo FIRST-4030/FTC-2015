@@ -1,12 +1,27 @@
 package org.ingrahamrobotics.ftc2015;
 
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
+import org.ingrahamrobotics.ftc2015.MotorCommands;
+
 /**
  * Created by robotics on 11/4/2015.
  */
-public class AutonomousTest {
+public class AutonomousTest extends LinearOpMode {
 
-    public void init() {
+    //private SensorManager gyro = (SensorManager) hardwareMap.appContext.getSystemService(Context.SENSOR_SERVICE);
+    //private MotorCommands drive = new MotorCommands(hardwareMap.dcMotor.get("right_drive"), hardwareMap.dcMotor.get("left_drive"));
 
+    public void runOpMode() {
+        DcMotor right = hardwareMap.dcMotor.get("right_drive");
+        DcMotor left = hardwareMap.dcMotor.get("left_drive");
+        MotorCommands drive = new MotorCommands(left, right);
+        int x = 5500/42 * 12;
+        drive.setMotorPower(0.5F);
     }
 
     /**

@@ -13,8 +13,8 @@ public class TankTest extends OpMode {
     DcMotor motorLeft;
 
     public void init() {
-        motorRight = hardwareMap.dcMotor.get("Right");
-        motorLeft = hardwareMap.dcMotor.get("Left");
+        motorRight = hardwareMap.dcMotor.get("right_drive");
+        motorLeft = hardwareMap.dcMotor.get("left_drive");
         motorRight.setDirection(DcMotor.Direction.REVERSE);
     }
 

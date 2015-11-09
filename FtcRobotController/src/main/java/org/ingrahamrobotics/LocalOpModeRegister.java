@@ -2,6 +2,7 @@ package org.ingrahamrobotics;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 
+import org.ingrahamrobotics.ftc2015.AutonomousTest;
 import org.ingrahamrobotics.test.ColorSensorTest;
 import org.ingrahamrobotics.test.EncoderTest;
 import org.ingrahamrobotics.test.TankTest;
@@ -15,5 +16,6 @@ public class LocalOpModeRegister {
         manager.register("TankTest", TankTest.class);
         manager.register("ColorSensorTest", ColorSensorTest.class);
         manager.register("EncoderTest", EncoderTest.class);
+        manager.register("AutonomousTest", AutonomousTest.class);
     }
 }

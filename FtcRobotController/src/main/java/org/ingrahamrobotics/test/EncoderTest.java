@@ -11,8 +11,8 @@ public class EncoderTest extends OpMode {
     DcMotor motorLeft;
 
     public void init(){
-        motorRight = hardwareMap.dcMotor.get("Right");
-        motorLeft = hardwareMap.dcMotor.get("Left");
+        motorRight = hardwareMap.dcMotor.get("right_drive");
+        motorLeft = hardwareMap.dcMotor.get("left_drive");
     }
     public void loop(){
         telemetry.addData("Right Motor Encoder", motorRight.getCurrentPosition());
