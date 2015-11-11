@@ -1,6 +1,8 @@
 package org.ingrahamrobotics.ftc2015;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
+
 /**
  * Created by robotics on 11/6/2015.
  */
@@ -15,6 +17,11 @@ public class MotorCommands {
         leftMotor.setDirection(DcMotor.Direction.REVERSE);
     }
 
+    public void setMotorMode(DcMotorController.RunMode m) {
+        leftMotor.setMode(m);
+        rightMotor.setMode(m);
+    }
+
     public void setMotorPower(float power) {
         leftMotor.setPower(power);
         rightMotor.setPower(power);
@@ -24,7 +31,12 @@ public class MotorCommands {
         setMotorPower(0);
     }
 
-    public void driveToDistance(int distance) {
+    public void driveToDistance(int distance, float power) {
+        if(!leftMotor.getMode().equals(DcMotorController.RunMode.RUN_TO_POSITION)) {
+            //some error?
+            return;
+        }
+        setMotorPower(power);
         int leftGoal = leftMotor.getCurrentPosition() + distance;
         int rightGoal = rightMotor.getCurrentPosition() + distance;
         leftMotor.setTargetPosition(leftGoal);

@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 
 import org.ingrahamrobotics.ftc2015.MotorCommands;
 
@@ -20,8 +21,14 @@ public class AutonomousTest extends LinearOpMode {
         DcMotor right = hardwareMap.dcMotor.get("right_drive");
         DcMotor left = hardwareMap.dcMotor.get("left_drive");
         MotorCommands drive = new MotorCommands(left, right);
+        drive.setMotorMode(DcMotorController.RunMode.RUN_TO_POSITION);
         int x = 5500/42 * 12;
-        drive.setMotorPower(0.5F);
+        drive.driveToDistance(2 * x, 1F);
+        //turn
+    }
+
+    public void autoRed() {
+
     }
 
     /**
