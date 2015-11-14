@@ -32,10 +32,12 @@ public class TankTest extends OpMode {
         telemetry.addData("G2X", gamepad2.x);
         telemetry.addData("EL", motorLeft.getCurrentPosition());
         telemetry.addData("ER", motorRight.getCurrentPosition());
+        telemetry.addData("Right Motor Encoder", motorRight.getCurrentPosition());
+        telemetry.addData("Left Motor Encoder", motorLeft.getCurrentPosition());
 
         // clip the right/left values so that the values never exceed +/- 1
-        right = Range.clip(right, -1, 1);
-        left = Range.clip(left, -1, 1);
+        right = (float) Range.clip(right, -.5, .5);
+        left = (float) Range.clip(left, -.5, .5);
 
         // write the values to the motors
         motorRight.setPower(right);

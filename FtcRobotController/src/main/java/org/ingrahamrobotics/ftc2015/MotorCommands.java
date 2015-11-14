@@ -32,10 +32,12 @@ public class MotorCommands {
     }
 
     public void driveToDistance(int distance, float power) {
+        /*
         if(!leftMotor.getMode().equals(DcMotorController.RunMode.RUN_TO_POSITION)) {
             //some error?
             return;
         }
+        */
         setMotorPower(power);
         int leftGoal = leftMotor.getCurrentPosition() + distance;
         int rightGoal = rightMotor.getCurrentPosition() + distance;
