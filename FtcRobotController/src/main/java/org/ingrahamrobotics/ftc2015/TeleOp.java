@@ -15,9 +15,9 @@ public class TeleOp extends OpMode {
     Servo collectorTilt;
     Servo zipLineLeft;
     Servo zipLineRight;
-    //these are untested ints. they need to be invidualized to each servo and tested.
-    final int SERVO_DOWN = 20;
-    final int SERVO_UP = 40;
+    //The servos accept floats between 0 and 1
+    final int SERVO_DOWN = 0;
+    final int SERVO_UP = 1;
 
 
     @Override
@@ -41,8 +41,8 @@ public class TeleOp extends OpMode {
         telemetry.addData("G1RY", gamepad1.right_stick_y);
 
         // clip the right/left values so that the values never exceed +/- 1
-        right = (float) Range.clip(right, -1, 1);
-        left = (float) Range.clip(left, -1, 1);
+        right = Range.clip(right, -1, 1);
+        left = Range.clip(left, -1, 1);
 
         //For debugging values after adjustment - can be commented out
         telemetry.addData("L Out", left);

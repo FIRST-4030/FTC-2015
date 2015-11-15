@@ -18,7 +18,7 @@ public class TankTest extends OpMode {
 
     Servo zipLineLeft;
     Servo zipLineRight;
-    //these are untested ints. they need to be invidualized to each servo and tested.
+
     final int SERVO_DOWN = 0;
     final int SERVO_UP = 1;
 
@@ -119,7 +119,7 @@ public class TankTest extends OpMode {
         //
         // Assume no scaling.
         //
-        float l_scale = 0.0f;
+        float l_scale;
 
         //
         // Ensure the values are legal.
