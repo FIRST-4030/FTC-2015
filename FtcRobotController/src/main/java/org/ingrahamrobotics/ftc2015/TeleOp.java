@@ -47,6 +47,7 @@ public class TeleOp extends OpMode {
         zipLineLeft = hardwareMap.servo.get("zip_line_left");
         zipLineRight = hardwareMap.servo.get("zip_line_right");
 
+        //other motors may need to be reversed
         motorLeft.setDirection(DcMotor.Direction.REVERSE);
         //lift.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
         //lift.setTargetPosition(LIFT_DOWN);
@@ -62,6 +63,7 @@ public class TeleOp extends OpMode {
         //For debugging values before adjustment - can be commented out
         telemetry.addData("G1LY", gamepad1.left_stick_y);
         telemetry.addData("G1RY", gamepad1.right_stick_y);
+        //or added to if necessary
 
         // clip the right/left values so that the values never exceed +/- 1
         right = Range.clip(right, -1, 1);
@@ -98,6 +100,7 @@ public class TeleOp extends OpMode {
         /*in this case SERVO_DOWN is used to describe when the collector is flat
         and
         */
+        //may want to map this to buttons on controller 2
         /*
         if(gamepad1.left_bumper) {
             collectorTilt.setPosition(SERVO_DOWN);
@@ -106,6 +109,7 @@ public class TeleOp extends OpMode {
         }
 
         //sets the lifts to one preset high and lowers it
+        //may want to map this to buttons on controller 2
         if(gamepad1.dpad_down) {
             lift.setTargetPosition(LIFT_DOWN);
         } else if(gamepad1.dpad_up) {
