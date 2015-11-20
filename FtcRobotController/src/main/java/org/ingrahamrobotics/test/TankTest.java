@@ -19,8 +19,10 @@ public class TankTest extends OpMode {
     Servo zipLineLeft;
     Servo zipLineRight;
 
-    final int SERVO_DOWN = 0;
-    final int SERVO_UP = 1;
+    final double SERVO_LEFT_UP = 0.8;
+    final double SERVO_RIGHT_UP = 0.25;
+    final double SERVO_LEFT_DOWN = 0;
+    final double SERVO_RIGHT_DOWN = 1.0;
 
     Servo collectorTilt;
 
@@ -74,8 +76,8 @@ public class TankTest extends OpMode {
         telemetry.addData("Left Motor Encoder", motorLeft.getCurrentPosition());
 
         // clip the right/left values so that the values never exceed +/- 1
-        right = (float) Range.clip(right, -.5, .5);
-        left = (float) Range.clip(left, -.5, .5);
+        right = (float) Range.clip(right, -1, 1);
+        left = (float) Range.clip(left, -1, 1);
 
         // write the values to the motors
         //try to scale it with algorithm swiped from the PushBotHardware OpCode
@@ -87,23 +89,18 @@ public class TankTest extends OpMode {
 
         //will move the zipline servos up and down
         if(gamepad2.left_bumper) {
-            zipLineLeft.setPosition(SERVO_UP);
+            zipLineLeft.setPosition(SERVO_LEFT_DOWN);
         } else {
-            zipLineLeft.setPosition(SERVO_DOWN);
+            zipLineLeft.setPosition(SERVO_LEFT_UP);
         }
 
         if(gamepad2.right_bumper) {
-            zipLineRight.setPosition(SERVO_UP);
+            zipLineRight.setPosition(SERVO_RIGHT_DOWN);
         } else {
-            zipLineRight.setPosition(SERVO_DOWN);
+            zipLineRight.setPosition(SERVO_RIGHT_UP);
         }
 
         //raises (tilts) and lowers the collector to score
-        if(gamepad1.left_bumper) {
-            collectorTilt.setPosition(SERVO_DOWN);
-        } else if(gamepad1.right_bumper) {
-            collectorTilt.setPosition(SERVO_UP);
-        }
 
     }
 
