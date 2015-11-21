@@ -10,8 +10,8 @@ public class TeleOp extends OpMode {
     DcMotor motorRight;
     DcMotor motorLeft;
 
-    DcMotor liftMotor;
-    DcMotor collectorSpinMotor;
+    //DcMotor liftMotor;
+    //DcMotor collectorSpinMotor;
 
     Servo zipLineLeft;
     Servo zipLineRight;
@@ -41,30 +41,30 @@ public class TeleOp extends OpMode {
         // Drive Motors
         motorRight = hardwareMap.dcMotor.get("right_drive");
         motorLeft = hardwareMap.dcMotor.get("left_drive");
-        motorRight.setDirection(DcMotor.Direction.REVERSE);
+        //motorRight.setDirection(DcMotor.Direction.REVERSE);
 
         // Lift/Collector Motors
-        liftMotor = hardwareMap.dcMotor.get("scoring_arm_motor");
-        liftMotor.setDirection(DcMotor.Direction.REVERSE);
-        collectorSpinMotor = hardwareMap.dcMotor.get("collector_spin_motor");
+        //liftMotor = hardwareMap.dcMotor.get("scoring_arm_motor");
+        //liftMotor.setDirection(DcMotor.Direction.REVERSE);
+        //collectorSpinMotor = hardwareMap.dcMotor.get("collector_spin_motor");
 
         // Servos
         zipLineLeft = hardwareMap.servo.get("zip_line_left");
         zipLineRight = hardwareMap.servo.get("zip_line_right");
-        collectorTilt = hardwareMap.servo.get("collector_tilt");
+        //collectorTilt = hardwareMap.servo.get("collector_tilt");
     }
 
     @Override
     public void start(){
         super.start();
-        collectorSpinMotor.setDirection(DcMotor.Direction.FORWARD);
-        collectorSpinMotor.setPower(1f);
+        //collectorSpinMotor.setDirection(DcMotor.Direction.FORWARD);
+        //collectorSpinMotor.setPower(1f);
     }
 
     @Override
     public void stop(){
         super.stop();
-        collectorSpinMotor.setPower(0f);
+        //collectorSpinMotor.setPower(0f);
     }
 
     public void loop() {
@@ -78,25 +78,25 @@ public class TeleOp extends OpMode {
         motorLeft.setPower(scale_motor_power(left));
 
         // Lift
-        float lift = gamepad2.left_stick_y;
-        lift = (float) Range.clip(lift, -1, 1);
-        liftMotor.setPower(scale_motor_power(lift));
+        //float lift = gamepad2.left_stick_y;
+        //lift = (float) Range.clip(lift, -1, 1);
+        //liftMotor.setPower(scale_motor_power(lift));
 
         // Collector Reverse
-        if(gamepad2.dpad_down) {
-            collectorSpinMotor.setPower(-1);
-        } else {
-            collectorSpinMotor.setPower(1);
-        }
+        //if(gamepad2.dpad_down) {
+        //    collectorSpinMotor.setPower(-1);
+        //} else {
+        //    collectorSpinMotor.setPower(1);
+        //}
 
         // Hopper Dump
-        if(gamepad2.x || gamepad2.right_stick_x<-.1) {
-            collectorTilt.setPosition(ARM_LEFT);
-        } else if (gamepad2.b || gamepad2.right_stick_x>.1) {
-            collectorTilt.setPosition(ARM_RIGHT);
-        } else {
-            collectorTilt.setPosition(ARM_NEUTRAL);
-        }
+        //if(gamepad2.x || gamepad2.right_stick_x<-.1) {
+        //    collectorTilt.setPosition(ARM_LEFT);
+        //} else if (gamepad2.b || gamepad2.right_stick_x>.1) {
+        //    collectorTilt.setPosition(ARM_RIGHT);
+        //} else {
+        //    collectorTilt.setPosition(ARM_NEUTRAL);
+        //}
 
         // Flags
         if(gamepad2.left_bumper) {
