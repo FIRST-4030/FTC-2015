@@ -18,33 +18,10 @@ import java.util.List;
  */
 public class AutonomousTest extends LinearOpMode{ //implements SensorEventListener{
 
-    private MotorCommands drive;
-
     boolean run = false;
-
-    //SensorManager manager = (SensorManager) hardwareMap.appContext.getSystemService(Context.SENSOR_SERVICE);
-    //Sensor rotation = manager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-
-    //float x, y, z, w;
-
-    DcMotor right = hardwareMap.dcMotor.get("right_drive");
-    DcMotor left = hardwareMap.dcMotor.get("left_drive");
-
-
-    /*public void onSensorChanged(SensorEvent event) {
-        // we received a sensor event. it is a good practice to check
-        // that we received the proper event
-        if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
-            // convert the rotation-vector to a 4x4 matrix. the matrix
-            // is interpreted by Open GL as the inverse of the
-            // rotation-vector, which is what we want.
-
-            x = event.values[0];
-            y = event.values[0];
-            z = event.values[0];
-            w = event.values[0];
-        }
-    }*/
+    private MotorCommands drive;
+    private DcMotor right = null;
+    private DcMotor left = null;
 
     @Override
     //public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -55,7 +32,6 @@ public class AutonomousTest extends LinearOpMode{ //implements SensorEventListen
         /*manager.registerListener((SensorEventListener) this, rotation, SensorManager.SENSOR_DELAY_UI);
 
         List<Sensor> rotationVector = manager.getSensorList(Sensor.TYPE_ROTATION_VECTOR);
-
         List<Sensor> all = manager.getSensorList(Sensor.TYPE_ALL);
         telemetry.addData("rotationVector 0 (x)",x);
         telemetry.addData("rotationVector 0 (x)",y);
@@ -67,10 +43,24 @@ public class AutonomousTest extends LinearOpMode{ //implements SensorEventListen
             telemetry.addData("Sensor" + i, s.getName());
             i++;
         }*/
+
+        // Init
+        DcMotor right = hardwareMap.dcMotor.get("right_drive");
+        DcMotor left = hardwareMap.dcMotor.get("left_drive");
+
+        // Wait for Start
+        try {
+            waitForStart();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // Drive forward 1 "foot"
         drive = new MotorCommands(left, right);
         drive.setMotorMode(DcMotorController.RunMode.RUN_TO_POSITION);
-        int x = 5500/42 * 12;
-        drive.driveToDistance(2 * x, 1F);
+        int x = 183; // Ticks/inch
+        drive.driveToDistance(12 * 8 * x, 1.0f);
+
         //turn
         //turn(45);
     }
@@ -93,7 +83,7 @@ public class AutonomousTest extends LinearOpMode{ //implements SensorEventListen
         if(degrees>0){
             leftGoal = left.getCurrentPosition()+encoderValue;
             rightGoal = left.getCurrentPosition()-encoderValue;
-        }else{
+        }   else{
             leftGoal = left.getCurrentPosition()-encoderValue;
             rightGoal = left.getCurrentPosition()+encoderValue;
         }
