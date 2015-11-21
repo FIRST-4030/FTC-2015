@@ -5,10 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-/**
- * Created by tanya on 10/9/15.
- *
- */
 public class TeleOp extends OpMode {
 
     DcMotor motorRight;
@@ -20,13 +16,13 @@ public class TeleOp extends OpMode {
     Servo zipLineLeft;
     Servo zipLineRight;
 
-    final double SERVO_LEFT_UP = 0.8;
-    final double SERVO_RIGHT_UP = 0.25;
-    final double SERVO_LEFT_DOWN = 0;
-    final double SERVO_RIGHT_DOWN = 1.0;
-    final double ARM_NEUTRAL = .5;
-    final double ARM_RIGHT = .75;
-    final double ARM_LEFT = .25;
+    static final double SERVO_LEFT_UP = 0.8;
+    static final double SERVO_RIGHT_UP = 0.25;
+    static final double SERVO_LEFT_DOWN = 0;
+    static final double SERVO_RIGHT_DOWN = 1.0;
+    static final double ARM_RIGHT = .65;
+    static final double ARM_NEUTRAL = .4;
+    static final double ARM_LEFT = .15;
 
     /*
     g1 L joystick = left tread *
@@ -42,12 +38,17 @@ public class TeleOp extends OpMode {
     Servo collectorTilt;
 
     public void init() {
+        // Drive Motors
         motorRight = hardwareMap.dcMotor.get("right_drive");
         motorLeft = hardwareMap.dcMotor.get("left_drive");
         motorRight.setDirection(DcMotor.Direction.REVERSE);
 
+        // Lift/Collector Motors
         liftMotor = hardwareMap.dcMotor.get("scoring_arm_motor");
+        liftMotor.setDirection(DcMotor.Direction.REVERSE);
         collectorSpinMotor = hardwareMap.dcMotor.get("collector_spin_motor");
+
+        // Servos
         zipLineLeft = hardwareMap.servo.get("zip_line_left");
         zipLineRight = hardwareMap.servo.get("zip_line_right");
         collectorTilt = hardwareMap.servo.get("collector_tilt");
@@ -56,7 +57,6 @@ public class TeleOp extends OpMode {
     @Override
     public void start(){
         super.start();
-        //start the collector spinning here
         collectorSpinMotor.setDirection(DcMotor.Direction.FORWARD);
         collectorSpinMotor.setPower(1f);
     }
@@ -64,7 +64,6 @@ public class TeleOp extends OpMode {
     @Override
     public void stop(){
         super.stop();
-        //stop the collector spinning here
         collectorSpinMotor.setPower(0f);
     }
 
@@ -78,20 +77,19 @@ public class TeleOp extends OpMode {
         motorRight.setPower(scale_motor_power(right));
         motorLeft.setPower(scale_motor_power(left));
 
-        // lift
+        // Lift
         float lift = gamepad2.left_stick_y;
         lift = (float) Range.clip(lift, -1, 1);
         liftMotor.setPower(scale_motor_power(lift));
 
-        telemetry.addData("L Out", left);
-        telemetry.addData("R Out", right);
-
+        // Collector Reverse
         if(gamepad2.dpad_down) {
             collectorSpinMotor.setPower(-1);
         } else {
             collectorSpinMotor.setPower(1);
         }
 
+        // Hopper Dump
         if(gamepad2.x || gamepad2.right_stick_x<-.1) {
             collectorTilt.setPosition(ARM_LEFT);
         } else if (gamepad2.b || gamepad2.right_stick_x>.1) {
@@ -100,21 +98,17 @@ public class TeleOp extends OpMode {
             collectorTilt.setPosition(ARM_NEUTRAL);
         }
 
-        //will move the zipline servos up and down
+        // Flags
         if(gamepad2.left_bumper) {
             zipLineLeft.setPosition(SERVO_LEFT_DOWN);
         } else {
             zipLineLeft.setPosition(SERVO_LEFT_UP);
         }
-
         if(gamepad2.right_bumper) {
             zipLineRight.setPosition(SERVO_RIGHT_DOWN);
         } else {
             zipLineRight.setPosition(SERVO_RIGHT_UP);
         }
-
-        //raises (tilts) and lowers the collector to score
-
     }
 
     //--------------------------------------------------------------------------
@@ -124,8 +118,7 @@ public class TeleOp extends OpMode {
     /**
      * Scale the joystick input using a nonlinear algorithm.
      */
-    protected float scale_motor_power(float p_power)
-    {
+    protected float scale_motor_power(float p_power) {
         //
         // Assume no scaling.
         //
@@ -147,26 +140,19 @@ public class TeleOp extends OpMode {
         // Get the corresponding index for the specified argument/parameter.
         //
         int l_index = (int)(l_power * 16.0);
-        if (l_index < 0)
-        {
+        if (l_index < 0) {
             l_index = -l_index;
-        }
-        else if (l_index > 16)
-        {
+        } else if (l_index > 16) {
             l_index = 16;
         }
 
-        if (l_power < 0)
-        {
+        if (l_power < 0) {
             l_scale = -l_array[l_index];
-        }
-        else
-        {
+        } else {
             l_scale = l_array[l_index];
         }
 
         return l_scale;
 
     } // scale_motor_power
-
 }
