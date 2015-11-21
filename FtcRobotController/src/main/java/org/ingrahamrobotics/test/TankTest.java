@@ -7,13 +7,14 @@ import com.qualcomm.robotcore.util.Range;
 
 /**
  * Created by tanya on 10/9/15.
+ *
  */
 public class TankTest extends OpMode {
 
     DcMotor motorRight;
     DcMotor motorLeft;
 
-    DcMotor scoringArmMotor;
+    DcMotor liftMotor;
     DcMotor collectorSpinMotor;
 
     Servo zipLineLeft;
@@ -23,6 +24,20 @@ public class TankTest extends OpMode {
     final double SERVO_RIGHT_UP = 0.25;
     final double SERVO_LEFT_DOWN = 0;
     final double SERVO_RIGHT_DOWN = 1.0;
+    final double ARM_NEUTRAL = .5;
+    final double ARM_RIGHT = .75;
+    final double ARM_LEFT = .25;
+
+    /*
+    g1 L joystick = left tread *
+    g1 R joystick = right tread *
+    g2 L joystick = lift *
+    g2 R joystick = dump
+    g2 X and B = dump
+    g2 L bumper = L flag *
+    g2 R bumper = R flag *
+    g2 D pad = collector reverse *
+     */
 
     Servo collectorTilt;
 
@@ -31,7 +46,7 @@ public class TankTest extends OpMode {
         motorLeft = hardwareMap.dcMotor.get("left_drive");
         motorRight.setDirection(DcMotor.Direction.REVERSE);
 
-        scoringArmMotor = hardwareMap.dcMotor.get("scoring_arm_motor");
+        liftMotor = hardwareMap.dcMotor.get("scoring_arm_motor");
         collectorSpinMotor = hardwareMap.dcMotor.get("collector_spin_motor");
         zipLineLeft = hardwareMap.servo.get("zip_line_left");
         zipLineRight = hardwareMap.servo.get("zip_line_right");
@@ -55,37 +70,35 @@ public class TankTest extends OpMode {
 
     public void loop() {
 
-        // note that if y equal -1 then joystick is pushed all of the way forward.
-        //for testing purposes, everything runs through one gamepad, gamepad2
-        float left = -gamepad2.left_stick_y;
-        float right = -gamepad2.right_stick_y;
-
-        //telemetry.addData("G1LY", gamepad1.left_stick_y);
-        //telemetry.addData("G1RY", gamepad1.right_stick_y);
-        telemetry.addData("G2LY", gamepad2.left_stick_x);
-        telemetry.addData("G2RY", gamepad2.right_stick_y);
-        //telemetry.addData("G1X", gamepad1.x);
-        telemetry.addData("G2X", gamepad2.x);
-        //telemetry.addData("G1BL", gamepad1.left_bumper);
-        //telemetry.addData("G1BR", gamepad1.right_bumper);
-        telemetry.addData("G2BL", gamepad2.left_bumper);
-        telemetry.addData("G2BR", gamepad2.right_bumper);
-        telemetry.addData("EL", motorLeft.getCurrentPosition());
-        telemetry.addData("ER", motorRight.getCurrentPosition());
-        telemetry.addData("Right Motor Encoder", motorRight.getCurrentPosition());
-        telemetry.addData("Left Motor Encoder", motorLeft.getCurrentPosition());
-
-        // clip the right/left values so that the values never exceed +/- 1
+        // Tank Drive
+        float left = -gamepad1.left_stick_y;
+        float right = -gamepad1.right_stick_y;
         right = (float) Range.clip(right, -1, 1);
         left = (float) Range.clip(left, -1, 1);
-
-        // write the values to the motors
-        //try to scale it with algorithm swiped from the PushBotHardware OpCode
         motorRight.setPower(scale_motor_power(right));
         motorLeft.setPower(scale_motor_power(left));
 
+        // lift
+        float lift = gamepad2.left_stick_y;
+        lift = (float) Range.clip(lift, -1, 1);
+        liftMotor.setPower(scale_motor_power(lift));
+
         telemetry.addData("L Out", left);
         telemetry.addData("R Out", right);
+
+        if(gamepad2.dpad_down) {
+            collectorSpinMotor.setPower(-1);
+        } else {
+            collectorSpinMotor.setPower(1);
+        }
+
+        if(gamepad2.x || gamepad2.right_stick_x<-.1) {
+            collectorTilt.setPosition(ARM_LEFT);
+        } else if (gamepad2.b || gamepad2.right_stick_x>.1) {
+            collectorTilt.setPosition(ARM_RIGHT);
+        } else {
+            collectorTilt.setPosition(ARM_NEUTRAL);
+        }
 
         //will move the zipline servos up and down
         if(gamepad2.left_bumper) {
