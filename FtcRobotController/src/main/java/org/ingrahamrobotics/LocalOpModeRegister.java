@@ -2,7 +2,8 @@ package org.ingrahamrobotics;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 
-import org.ingrahamrobotics.ftc2015.AutonomousTest;
+import org.ingrahamrobotics.test.AutonomousTest;
+import org.ingrahamrobotics.ftc2015.TeleOp;
 import org.ingrahamrobotics.test.ColorSensorTest;
 import org.ingrahamrobotics.test.EncoderTest;
 import org.ingrahamrobotics.test.TankTest;
@@ -13,6 +14,7 @@ import org.ingrahamrobotics.test.TankTest;
 public class LocalOpModeRegister {
 
     public LocalOpModeRegister(OpModeManager manager) {
+        manager.register("TeleOp", TeleOp.class);
         manager.register("TankTest", TankTest.class);
         manager.register("ColorSensorTest", ColorSensorTest.class);
         manager.register("EncoderTest", EncoderTest.class);

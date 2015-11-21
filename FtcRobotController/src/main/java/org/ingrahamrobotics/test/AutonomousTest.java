@@ -1,4 +1,4 @@
-package org.ingrahamrobotics.ftc2015;
+package org.ingrahamrobotics.test;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -67,12 +67,12 @@ public class AutonomousTest extends LinearOpMode{ //implements SensorEventListen
             telemetry.addData("Sensor" + i, s.getName());
             i++;
         }*/
-        //drive = new MotorCommands(left, right);
-        //drive.setMotorMode(DcMotorController.RunMode.RUN_TO_POSITION);
-        //int x = 5500/42 * 12;
-        //drive.driveToDistance(2 * x, 1F);
+        drive = new MotorCommands(left, right);
+        drive.setMotorMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        int x = 5500/42 * 12;
+        drive.driveToDistance(2 * x, 1F);
         //turn
-        turn(45);
+        //turn(45);
     }
 
     public void autoRed() {
