@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 
+import org.ingrahamrobotics.ftc2015.DriveParameters;
 import org.ingrahamrobotics.ftc2015.MotorCommands;
 
 import java.util.List;
@@ -57,9 +58,13 @@ public class AutonomousTest extends LinearOpMode{ //implements SensorEventListen
 
         // Drive forward 1 "foot"
         drive = new MotorCommands(left, right);
-        drive.setMotorMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        //drive.setMotorMode(DcMotorController.RunMode.RUN_TO_POSITION);
         int x = 183; // Ticks/inch
-        drive.driveToDistance(12 * 8 * x, 1.0f);
+        DriveParameters frd8Ft = drive.genDriveToDistance(1.0f, 12 * 8 * x);
+        long startTime = System.currentTimeMillis();
+        do {
+            drive.driveLoop(frd8Ft, startTime);
+        } while(!drive.isFinished());
 
         //turn
         //turn(45);

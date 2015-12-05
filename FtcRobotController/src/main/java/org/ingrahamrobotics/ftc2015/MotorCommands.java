@@ -10,6 +10,7 @@ public class MotorCommands {
 
     DcMotor leftMotor;
     DcMotor rightMotor;
+    private boolean isFinished;
 
     public MotorCommands(DcMotor left, DcMotor right) {
         leftMotor = left;
@@ -17,6 +18,7 @@ public class MotorCommands {
         leftMotor.setDirection(DcMotor.Direction.REVERSE);
         leftMotor.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         rightMotor.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        isFinished = true;
     }
 
     /*
@@ -27,57 +29,79 @@ public class MotorCommands {
 */
 
     public void setMotorPower(float power) {
+        isFinished = false;
+        leftMotor.setPower(power);
+        rightMotor.setPower(power);
+        isFinished = true;
+    }
+
+    //Helper method for the drive loop
+    private void setMotorPowerH(float power) {
         leftMotor.setPower(power);
         rightMotor.setPower(power);
     }
 
+    /*
+    //Returns false if there's an error with inputs
     public boolean drive(DriveParameters parameters) {
+        isFinished = false;
         //Get the parameters to check
         float power = parameters.getPower();
         int distance = parameters.getDistance();
         //Safety checks
         if(power < -1 || power > 1 || distance < 0) {
+            isFinished = true;
             return false;
         }
         long startTime = System.currentTimeMillis();
-
-        //True if we got to the end of the method
+        while(!isFinished) {
+            driveLoop(parameters, startTime);
+        }
         return true;
     }
+    */
 
-    //Returns true when the loop is done
+    //Returns false if there's an error
     public boolean driveLoop(DriveParameters parameters, long startTime) {
+        isFinished = false;
         //Get variables for use
         float power = parameters.getPower();
         int distance = parameters.getDistance();
         int goalPosition = (int) (power / Math.abs(power) * distance) + leftMotor.getCurrentPosition();
+        setMotorPowerH(power);
         //Conditions to stop
         if(power == 0) {
-            return true;
-        }
-        setMotorPower(power);
-        if((System.currentTimeMillis() - startTime) / 1000.0 > 30) {
-            return true;
-        }
-        if(distance != DriveParameters.DEF_DISTANCE) {
+            isFinished = true;
+        } else if((System.currentTimeMillis() - startTime) / 1000.0 > 30) {
+            isFinished = true;
+            return false;
+        } else if(distance != DriveParameters.DEF_DISTANCE) {
             if (power > 0 && leftMotor.getCurrentPosition() >= goalPosition) {
-                return true;
+                isFinished = true;
             } else if (power < 0 && leftMotor.getCurrentPosition() <= goalPosition) {
-                return true;
+                isFinished = true;
             }
+        } else {
+            isFinished = false;
         }
-        //insert other stuff here
-        return false;
+        return true;
     }
 
     public void stopDriveMotors() {
+        isFinished = false;
         leftMotor.setPower(0);
         rightMotor.setPower(0);
+        isFinished = true;
     }
 
-    public void driveToDistance(float power, int distance) {
-        drive(new DriveParameters(power, distance));
+    public DriveParameters genDriveToDistance(float power, int distance) {
+        return new DriveParameters(power, distance);
     }
+
+    public boolean isFinished() {
+        return isFinished;
+    }
+
 /*
     public void setMotorTurn(float power, boolean left) {
         if (left) {

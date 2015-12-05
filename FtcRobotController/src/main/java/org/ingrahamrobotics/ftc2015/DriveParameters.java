@@ -1,10 +1,13 @@
 package org.ingrahamrobotics.ftc2015;
 
+import com.qualcomm.robotcore.util.Range;
+
 /**
  * Created by robotics on 11/4/2015.
  */
 public class DriveParameters {
 
+    //these are the default values
     public static final int DEF_DISTANCE = 0;
 
     private float myPower;
@@ -16,7 +19,10 @@ public class DriveParameters {
     private int sonar;
 
     public DriveParameters(float power, int distance) {
-        myPower = power;
+        myPower = (float) Range.clip(power, -1, 1);
+        if(distance < 0) {
+            distance = DEF_DISTANCE;
+        }
         myDistance = distance;
     }
 
@@ -32,7 +38,5 @@ public class DriveParameters {
         myPower = power;
     }
 
-    public void setDistance(int distance) {
-        myDistance = distance;
-    }
+    public void setDistance(int distance) { myDistance = distance; }
 }

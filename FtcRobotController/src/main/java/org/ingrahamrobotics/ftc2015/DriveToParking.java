@@ -17,7 +17,6 @@ public class DriveToParking extends LinearOpMode {
         DcMotor right = hardwareMap.dcMotor.get("right_drive");
         DcMotor left = hardwareMap.dcMotor.get("left_drive");
         drive = new MotorCommands(left, right);
-        drive.setMotorMode(DcMotorController.RunMode.RUN_TO_POSITION);
         waitForStart();
 
         //int x = 5500/42 * 12; this needs to be recalibrated for the bigger robot, this is encoder units/inches * 12 to get feet
