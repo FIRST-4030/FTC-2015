@@ -26,24 +26,42 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package org.ingrahamrobotics.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 
-import org.ingrahamrobotics.test.sensors.Compass;
+import org.ingrahamrobotics.ftc2015.sensors.Compass;
 
 public class CompassTest extends OpMode {
 
-    Compass compass;
+    private Compass compass;
+    private boolean ready = false;
+    private double initialHeading = 0;
 
-    // write some device information (connection info, name and type)
-    // to the log file.
     @Override
     public void init() {
-        compass.init();
+        compass = new Compass();
+        ready = false;
+
+        compass.start();
     }
 
     @Override
     public void loop() {
-        telemetry.addData("Compass Ready: ", compass.ready());
-        telemetry.addData("Compass X: ", compass.heading());
+        if (!ready) {
+            telemetry.addData("Compass Calibrating", getRuntime());
+            if (compass.ready()) {
+                compass.reset();
+                ready = true;
+                telemetry.clearData();
+            } else {
+                return;
+            }
+        }
+
+        telemetry.addData("Heading", compass.heading());
+        telemetry.addData("Heading Delta", compass.relativeHeading());
+    }
+
+    @Override
+    public void stop() {
+        compass.stop();
     }
 }
