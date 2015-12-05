@@ -73,6 +73,7 @@ import java.io.FileNotFoundException;
 import java.io.Serializable;
 
 public class FtcRobotControllerActivity extends Activity {
+  public static FtcRobotControllerActivity FTC_ACTIVITY = null;
 
   private static final int REQUEST_CONFIG_WIFI_CHANNEL = 1;
   private static final boolean USE_DEVICE_EMULATION = false;
@@ -136,6 +137,7 @@ public class FtcRobotControllerActivity extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    FTC_ACTIVITY = this;
 
     setContentView(R.layout.activity_ftc_controller);
 
@@ -371,7 +373,7 @@ public class FtcRobotControllerActivity extends Activity {
         }
       });
     }
-  }
+}
 
   public void showToast(final Toast toast) {
     runOnUiThread(new Runnable() {
