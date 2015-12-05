@@ -25,15 +25,15 @@ public class TeleOp extends OpMode {
     static final double ARM_LEFT = .15;
 
     /*
-    g1 L joystick = left tread *
-    g1 R joystick = right tread *
-    g2 L joystick = lift *
-    g2 R joystick = dump
-    g2 X and B = dump
-    g2 L bumper = L flag *
-    g2 R bumper = R flag *
-    g2 D pad = collector reverse *
-     */
+    g1 L joystick = left tread
+    g1 R joystick = right tread
+    g2 Y = lift up
+    g2 A = lift down
+    g2 B = lift midway
+    g2 D pad = hopper
+    g2 L bumper = L flag
+    g2 R bumper = R flag
+    */
 
     Servo collectorTilt;
 
@@ -77,22 +77,29 @@ public class TeleOp extends OpMode {
         motorRight.setPower(scale_motor_power(right));
         motorLeft.setPower(scale_motor_power(left));
 
-        // Lift
+        /*// Lift
         float lift = gamepad2.left_stick_y;
         lift = (float) Range.clip(lift, -1, 1);
         liftMotor.setPower(scale_motor_power(lift));
+        */
 
-        // Collector Reverse
-        if(gamepad2.dpad_down) {
-            collectorSpinMotor.setPower(-1);
-        } else {
-            collectorSpinMotor.setPower(1);
+        //Lift Up
+        if(gamepad2.y) {
+            //liftMotor.setTargetPosition();
+        }
+        //Lift Down
+        if(gamepad2.a) {
+            //liftMotor.setTargetPosition();
+        }
+        //Lift Middle
+        if(gamepad2.b) {
+            //liftMotor.setTargetPosition();
         }
 
         // Hopper Dump
-        if(gamepad2.x || gamepad2.right_stick_x<-.1) {
+        if(gamepad2.dpad_left) {
             collectorTilt.setPosition(ARM_LEFT);
-        } else if (gamepad2.b || gamepad2.right_stick_x>.1) {
+        } else if (gamepad2.dpad_right) {
             collectorTilt.setPosition(ARM_RIGHT);
         } else {
             collectorTilt.setPosition(ARM_NEUTRAL);
