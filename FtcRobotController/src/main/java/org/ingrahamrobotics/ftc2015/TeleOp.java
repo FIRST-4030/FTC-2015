@@ -10,19 +10,20 @@ public class TeleOp extends OpMode {
     DcMotor motorRight;
     DcMotor motorLeft;
 
-    //DcMotor liftMotor;
-    //DcMotor collectorSpinMotor;
+    DcMotor liftMotor;
+    DcMotor collectorSpinMotor;
 
     Servo zipLineLeft;
     Servo zipLineRight;
+    Servo collectorTilt;
 
-    static final double SERVO_LEFT_UP = 0.8;
-    static final double SERVO_RIGHT_UP = 0.25;
-    static final double SERVO_LEFT_DOWN = 0;
-    static final double SERVO_RIGHT_DOWN = 1.0;
-    static final double ARM_RIGHT = .65;
-    static final double ARM_NEUTRAL = .4;
-    static final double ARM_LEFT = .15;
+    static final double SERVO_LEFT_DOWN = 1.0;
+    static final double SERVO_LEFT_UP = 0.0;
+    static final double SERVO_RIGHT_DOWN = 0.0;
+    static final double SERVO_RIGHT_UP = 1.0;
+    static final double ARM_RIGHT = 1.0;
+    static final double ARM_NEUTRAL = 0.5;
+    static final double ARM_LEFT = 0.0;
 
     /*
     g1 L joystick = left tread *
@@ -35,69 +36,79 @@ public class TeleOp extends OpMode {
     g2 D pad = collector reverse *
      */
 
-    Servo collectorTilt;
-
     public void init() {
         // Drive Motors
         motorRight = hardwareMap.dcMotor.get("right_drive");
         motorLeft = hardwareMap.dcMotor.get("left_drive");
-        //motorRight.setDirection(DcMotor.Direction.REVERSE);
+        motorRight.setDirection(DcMotor.Direction.REVERSE);
 
         // Lift/Collector Motors
-        //liftMotor = hardwareMap.dcMotor.get("scoring_arm_motor");
-        //liftMotor.setDirection(DcMotor.Direction.REVERSE);
-        //collectorSpinMotor = hardwareMap.dcMotor.get("collector_spin_motor");
+        liftMotor = hardwareMap.dcMotor.get("scoring_arm_motor");
+        liftMotor.setDirection(DcMotor.Direction.REVERSE);
+        collectorSpinMotor = hardwareMap.dcMotor.get("collector_spin_motor");
 
         // Servos
         zipLineLeft = hardwareMap.servo.get("zip_line_left");
         zipLineRight = hardwareMap.servo.get("zip_line_right");
-        //collectorTilt = hardwareMap.servo.get("collector_tilt");
+        collectorTilt = hardwareMap.servo.get("collector_tilt");
     }
 
     @Override
     public void start(){
         super.start();
-        //collectorSpinMotor.setDirection(DcMotor.Direction.FORWARD);
-        //collectorSpinMotor.setPower(1f);
+        collectorSpinMotor.setDirection(DcMotor.Direction.FORWARD);
+        collectorSpinMotor.setPower(1f);
     }
 
     @Override
     public void stop(){
         super.stop();
-        //collectorSpinMotor.setPower(0f);
+        collectorSpinMotor.setPower(0f);
     }
 
     public void loop() {
 
+        CollectTelemetry();
         // Tank Drive
         float left = -gamepad1.left_stick_y;
         float right = -gamepad1.right_stick_y;
-        right = (float) Range.clip(right, -1, 1);
-        left = (float) Range.clip(left, -1, 1);
+        right = Range.clip(right, -1f, 1f);
+        left = Range.clip(left, -1f, 1f);
         motorRight.setPower(scale_motor_power(right));
         motorLeft.setPower(scale_motor_power(left));
 
         // Lift
-        //float lift = gamepad2.left_stick_y;
-        //lift = (float) Range.clip(lift, -1, 1);
-        //liftMotor.setPower(scale_motor_power(lift));
+        float lift = gamepad2.left_stick_y;
+        lift = Range.clip(lift, -1f, 1f);
+        liftMotor.setPower(scale_motor_power(lift));
 
-        // Collector Reverse
-        //if(gamepad2.dpad_down) {
-        //    collectorSpinMotor.setPower(-1);
-        //} else {
-        //    collectorSpinMotor.setPower(1);
-        //}
-
+        //we also want to be able to turn the collector motor off (it's noisy...)
+        if (!(gamepad1.a || gamepad2.a)) {
+            // Collector Reverse
+            if (gamepad2.dpad_down) {
+                collectorSpinMotor.setPower(-1);
+            } else {
+                collectorSpinMotor.setPower(1);
+            }
+        } else {
+            collectorSpinMotor.setPower(0);
+        }
+        //the hopper digs into the floor if it gets tilted while at minimum height
+        //we are going to disallow tilting the hopper until the lift arm is extended
+        //75% or more
         // Hopper Dump
-        //if(gamepad2.x || gamepad2.right_stick_x<-.1) {
-        //    collectorTilt.setPosition(ARM_LEFT);
-        //} else if (gamepad2.b || gamepad2.right_stick_x>.1) {
-        //    collectorTilt.setPosition(ARM_RIGHT);
-        //} else {
-        //    collectorTilt.setPosition(ARM_NEUTRAL);
-        //}
-
+        if (liftMotor.getPower() > 0.75) {
+            if (gamepad2.x || gamepad2.right_stick_x < -.1) {
+                collectorTilt.setPosition(ARM_LEFT);
+            } else if (gamepad2.b || gamepad2.right_stick_x > .1) {
+                collectorTilt.setPosition(ARM_RIGHT);
+            } else {
+                collectorTilt.setPosition(ARM_NEUTRAL);
+            }
+        }
+        else{
+            collectorTilt.setPosition(ARM_NEUTRAL);
+        }
         // Flags
         if(gamepad2.left_bumper) {
             zipLineLeft.setPosition(SERVO_LEFT_DOWN);
@@ -155,4 +166,17 @@ public class TeleOp extends OpMode {
         return l_scale;
 
     } // scale_motor_power
+
+    //TODO: Create base OpMode that implements telemetry?
+    protected void CollectTelemetry(){
+        telemetry.addData("G1LY", gamepad1.left_stick_y);
+        telemetry.addData("G1RY", gamepad1.right_stick_y);
+        telemetry.addData("G2LY", gamepad2.left_stick_x);
+        telemetry.addData("G2RY", gamepad2.right_stick_y);
+        telemetry.addData("G1X", gamepad1.x);
+        telemetry.addData("G2X", gamepad2.x);
+        telemetry.addData("EL", motorLeft.getCurrentPosition());
+        telemetry.addData("ER", motorRight.getCurrentPosition());
+
+    }
 }

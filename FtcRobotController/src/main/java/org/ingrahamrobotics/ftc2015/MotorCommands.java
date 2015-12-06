@@ -15,7 +15,7 @@ public class MotorCommands {
     public MotorCommands(DcMotor left, DcMotor right) {
         leftMotor = left;
         rightMotor = right;
-        leftMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightMotor.setDirection(DcMotor.Direction.REVERSE);
         leftMotor.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         rightMotor.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         isFinished = true;
