@@ -51,6 +51,7 @@ public class TeleOp extends OpMode {
         zipLineLeft = hardwareMap.servo.get("zip_line_left");
         zipLineRight = hardwareMap.servo.get("zip_line_right");
         collectorTilt = hardwareMap.servo.get("collector_tilt");
+        collectorTilt.setPosition(ARM_NEUTRAL);
     }
 
     @Override
@@ -94,21 +95,15 @@ public class TeleOp extends OpMode {
             collectorSpinMotor.setPower(0);
         }
         //the hopper digs into the floor if it gets tilted while at minimum height
-        //we are going to disallow tilting the hopper until the lift arm is extended
-        //75% or more
+        //we need to disallow tilting the hopper until the lift arm is extended
+        //75% or more, but we need a motor with an encoder to do this properly
         // Hopper Dump
-        if (liftMotor.getPower() > 0.75) {
-            if (gamepad2.x || gamepad2.right_stick_x < -.1) {
-                collectorTilt.setPosition(ARM_LEFT);
-            } else if (gamepad2.b || gamepad2.right_stick_x > .1) {
-                collectorTilt.setPosition(ARM_RIGHT);
-            } else {
-                collectorTilt.setPosition(ARM_NEUTRAL);
-            }
+        if (gamepad2.x || gamepad2.right_stick_x < -.1) {
+            collectorTilt.setPosition(ARM_LEFT);
+        } else if (gamepad2.b || gamepad2.right_stick_x > .1) {
+            collectorTilt.setPosition(ARM_RIGHT);
         }
-        else{
-            collectorTilt.setPosition(ARM_NEUTRAL);
-        }
+
         // Flags
         if(gamepad2.left_bumper) {
             zipLineLeft.setPosition(SERVO_LEFT_DOWN);

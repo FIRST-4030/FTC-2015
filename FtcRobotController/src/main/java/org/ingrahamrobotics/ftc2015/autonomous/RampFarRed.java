@@ -7,13 +7,12 @@ import org.ingrahamrobotics.ftc2015.drive.DriveParameters;
 import org.ingrahamrobotics.ftc2015.drive.MotorCommands;
 
 /**
- * Created by Ariel on 11/18/2015.
+ * Created by robotics on 12/9/2015.
  */
-public class DriveToParking extends LinearOpMode {
+public class RampFarRed extends LinearOpMode {
 
     private MotorCommands drive;
 
-    @Override
     public void runOpMode() {
         // Init
         DcMotor right = hardwareMap.dcMotor.get("right_drive");
@@ -26,15 +25,20 @@ public class DriveToParking extends LinearOpMode {
             e.printStackTrace();
         }
 
-        // Drive forward into parking zone
         drive = new MotorCommands(left, right);
-        DriveParameters frd8Ft = drive.genDriveToDistance(1.0f, 12 * 8 * MotorCommands.TICKS_PER_INCH);
-        //maybe add some way to generate these on your own? Some sort of method.
-        //Would require quite a bit of restructuring: do later
+        DriveParameters bkd7Ft = drive.genDriveToDistance(-1.0f, 12 * 7 * MotorCommands.TICKS_PER_INCH);
         long startTime = System.currentTimeMillis();
         int position = left.getCurrentPosition();
         do {
-            drive.driveLoop(frd8Ft, startTime, position);
+            drive.driveLoop(bkd7Ft, startTime, position);
+        } while(!drive.isFinished());
+        DriveParameters trn50R = drive.genTurnToAngle(1.0f, 50, true);
+        //INSERT DRIVE LOOP WITH NEW STARTTIME AND POSITION//
+        DriveParameters frd5Ft = drive.genDriveToDistance(1.0f, 12 * 5 * MotorCommands.TICKS_PER_INCH);
+        startTime = System.currentTimeMillis();
+        position = left.getCurrentPosition();
+        do {
+            drive.driveLoop(frd5Ft, startTime, position);
         } while(!drive.isFinished());
     }
 }

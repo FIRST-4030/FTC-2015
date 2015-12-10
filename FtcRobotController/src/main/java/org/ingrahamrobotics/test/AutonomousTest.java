@@ -54,8 +54,9 @@ public class AutonomousTest extends LinearOpMode{ //implements SensorEventListen
         int x = 183; // Ticks/inch
         DriveParameters frd8Ft = drive.genDriveToDistance(1.0f, 12 * 8 * x);
         long startTime = System.currentTimeMillis();
+        int position = left.getCurrentPosition();
         do {
-            drive.driveLoop(frd8Ft, startTime);
+            drive.driveLoop(frd8Ft, startTime, position);
         } while(!drive.isFinished());
 
         //turn

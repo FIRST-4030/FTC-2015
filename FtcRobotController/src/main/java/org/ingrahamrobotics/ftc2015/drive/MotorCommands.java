@@ -3,6 +3,7 @@ package org.ingrahamrobotics.ftc2015.drive;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 
+import org.ingrahamrobotics.ftc2015.autonomous.DriveToParking;
 import org.ingrahamrobotics.ftc2015.drive.DriveParameters;
 
 /**
@@ -13,11 +14,12 @@ public class MotorCommands {
     DcMotor leftMotor;
     DcMotor rightMotor;
     private boolean isFinished;
+    public static final int TICKS_PER_INCH = 183;
 
     public MotorCommands(DcMotor left, DcMotor right) {
         leftMotor = left;
         rightMotor = right;
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftMotor.setDirection(DcMotor.Direction.REVERSE);
         leftMotor.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         rightMotor.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         isFinished = true;
@@ -38,9 +40,19 @@ public class MotorCommands {
     }
 
     //Helper method for the drive loop
-    private void setMotorPowerH(float power) {
-        leftMotor.setPower(power);
-        rightMotor.setPower(power);
+    private void setMotorPowerH(float power, double turn, boolean right) {
+        float lPower = power;
+        float rPower = power;
+        //Sets motors to go opposite directions when turning
+        if(turn != 0) {
+            if(right) {
+                rPower = -rPower;
+            } else {
+                lPower = -lPower;
+            }
+        }
+        leftMotor.setPower(lPower);
+        rightMotor.setPower(rPower);
     }
 
     /*
@@ -64,13 +76,17 @@ public class MotorCommands {
     */
 
     //Returns false if there's an error
-    public boolean driveLoop(DriveParameters parameters, long startTime) {
+    //MAY NEED TO ADD A HEADING PARAMETER//
+    public boolean driveLoop(DriveParameters parameters, long startTime, int position) {
         isFinished = false;
         //Get variables for use
         float power = parameters.getPower();
         int distance = parameters.getDistance();
-        int goalPosition = (int) (power / Math.abs(power) * distance) + leftMotor.getCurrentPosition();
-        setMotorPowerH(power);
+        int goalPosition = (int) (power / Math.abs(power) * distance) + position;
+        double turnAngle = parameters.getTurnAngle();
+        //double goalAngle = turnAngle + heading;
+        boolean isToRight = parameters.isToRight();
+        setMotorPowerH(power, turnAngle, isToRight);
         //Conditions to stop
         if(power == 0) {
             isFinished = true;
@@ -83,6 +99,8 @@ public class MotorCommands {
             } else if (power < 0 && leftMotor.getCurrentPosition() <= goalPosition) {
                 isFinished = true;
             }
+        } else if(turnAngle != DriveParameters.DEF_ANGLE) {
+            //INSERT COMPASS CODE TO COMPARE CURRENT HEADING TO A GOAL//
         } else {
             isFinished = false;
         }
@@ -97,7 +115,11 @@ public class MotorCommands {
     }
 
     public DriveParameters genDriveToDistance(float power, int distance) {
-        return new DriveParameters(power, distance);
+        return new DriveParameters(power, distance, DriveParameters.DEF_ANGLE, false);
+    }
+
+    public DriveParameters genTurnToAngle(float power, double angle, boolean isRight) {
+        return new DriveParameters(Math.abs(power), DriveParameters.DEF_DISTANCE, angle, isRight);
     }
 
     public boolean isFinished() {
