@@ -35,9 +35,6 @@ public class TeleOp extends OpMode {
     g2 L bumper = L flag
     g2 R bumper = R flag
     */
-/
-
-    Servo collectorTilt;
 
     public void init() {
         // Drive Motors
@@ -52,7 +49,10 @@ public class TeleOp extends OpMode {
 
         // Servos
         zipLineLeft = hardwareMap.servo.get("zip_line_left");
+        zipLineLeft.setPosition(SERVO_LEFT_UP);
         zipLineRight = hardwareMap.servo.get("zip_line_right");
+        zipLineRight.setPosition(SERVO_RIGHT_UP);
+
         collectorTilt = hardwareMap.servo.get("collector_tilt");
         collectorTilt.setPosition(ARM_NEUTRAL);
     }
