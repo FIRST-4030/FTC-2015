@@ -1,18 +1,10 @@
 package org.ingrahamrobotics.test;
 
-import android.content.Context;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorController;
 
-import org.ingrahamrobotics.ftc2015.DriveParameters;
-import org.ingrahamrobotics.ftc2015.MotorCommands;
-
-import java.util.List;
+import org.ingrahamrobotics.ftc2015.drive.DriveParameters;
+import org.ingrahamrobotics.ftc2015.drive.MotorCommands;
 
 /**
  * Created by robotics on 11/4/2015.

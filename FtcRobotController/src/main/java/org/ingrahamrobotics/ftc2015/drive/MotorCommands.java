@@ -1,7 +1,9 @@
-package org.ingrahamrobotics.ftc2015;
+package org.ingrahamrobotics.ftc2015.drive;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
+
+import org.ingrahamrobotics.ftc2015.drive.DriveParameters;
 
 /**
  * Created by robotics on 11/6/2015.

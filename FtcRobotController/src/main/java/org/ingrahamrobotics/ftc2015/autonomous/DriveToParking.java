@@ -1,8 +1,9 @@
-package org.ingrahamrobotics.ftc2015;
+package org.ingrahamrobotics.ftc2015.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorController;
+
+import org.ingrahamrobotics.ftc2015.drive.MotorCommands;
 
 /**
  * Created by Ariel on 11/18/2015.
