@@ -1,17 +1,10 @@
 package org.ingrahamrobotics.test;
 
-import android.content.Context;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorController;
 
-import org.ingrahamrobotics.ftc2015.MotorCommands;
-
-import java.util.List;
+import org.ingrahamrobotics.ftc2015.drive.DriveParameters;
+import org.ingrahamrobotics.ftc2015.drive.MotorCommands;
 
 /**
  * Created by robotics on 11/4/2015.
@@ -57,9 +50,14 @@ public class AutonomousTest extends LinearOpMode{ //implements SensorEventListen
 
         // Drive forward 1 "foot"
         drive = new MotorCommands(left, right);
-        drive.setMotorMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        //drive.setMotorMode(DcMotorController.RunMode.RUN_TO_POSITION);
         int x = 183; // Ticks/inch
-        drive.driveToDistance(12 * 8 * x, 1.0f);
+        DriveParameters frd8Ft = drive.genDriveToDistance(1.0f, 12 * 8 * x);
+        long startTime = System.currentTimeMillis();
+        int position = left.getCurrentPosition();
+        do {
+            drive.driveLoop(frd8Ft, startTime, position);
+        } while(!drive.isFinished());
 
         //turn
         //turn(45);

@@ -7,6 +7,10 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.GpsStatus;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -29,9 +33,11 @@ import java.util.List;
 public class PhoneSensorTest extends OpMode {
 
     private SensorManager sensorManager;
+    private LocationManager locationManager;
     private Sensor gyro;
     private Sensor accelerometer;
-    //Servo flipperServo;
+    //Servo leftFlipperServo;
+    //Servo rightFlipperServo;
     DcMotor motorRight;
     DcMotor motorLeft;
 
@@ -39,20 +45,48 @@ public class PhoneSensorTest extends OpMode {
     private SensorEvent accelerometerEvent = null;
     private PhoneSensorListener gyroListener = new PhoneSensorListener();
     private PhoneSensorListener accelerometerListener = new PhoneSensorListener();
+    private LocationListener locationListener = new LocationListener() {
+        public Location lastLocation = null;
+
+        @Override
+        public void onLocationChanged(Location location) {
+            lastLocation = location;
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            //no idea
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            //no idea
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            //no idea
+        }
+    };
 
     public void init() {
         sensorManager = (SensorManager) hardwareMap.appContext.getSystemService(Context.SENSOR_SERVICE);
+        locationManager = (LocationManager) hardwareMap.appContext.getSystemService(Context.LOCATION_SERVICE);
+
         gyro = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(accelerometerListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(gyroListener, gyro, SensorManager.SENSOR_DELAY_NORMAL);
+        
+        //locationManager.addGpsStatusListener((GpsStatus.Listener) locationListener);
 
         motorRight = hardwareMap.dcMotor.get("right_drive");
         motorLeft = hardwareMap.dcMotor.get("left_drive");
         motorRight.setDirection(DcMotor.Direction.REVERSE);
 
-        //flipperServo = hardwareMap.servo.get("flipper_servo");
-        
+        //leftFlipperServo = hardwareMap.servo.get("zip_line_left");
+        //rightFlipperServo = hardwareMap.servo.get("zip_line_right");
+
     }
 
     public void loop() {
@@ -74,8 +108,10 @@ public class PhoneSensorTest extends OpMode {
         telemetry.addData("G2X", gamepad2.x);
         telemetry.addData("EL", motorLeft.getCurrentPosition());
         telemetry.addData("ER", motorRight.getCurrentPosition());
-        //telemetry.addData("F1P", flipperServo.getPosition());
-        //telemetry.addData("F1D", flipperServo.getDirection());
+        //telemetry.addData("LF1P", leftFlipperServo.getPosition());
+        //telemetry.addData("LF1D", leftFlipperServo.getDirection());
+        //telemetry.addData("RF1P", leftFlipperServo.getPosition());
+        //telemetry.addData("RF1D", leftFlipperServo.getDirection());
 
         // clip the right/left values so that the values never exceed +/- 1
         right = Range.clip(right, -1, 1);
@@ -85,15 +121,18 @@ public class PhoneSensorTest extends OpMode {
         motorRight.setPower(right);
         motorLeft.setPower(left);
 
-        //also the servo position
+        //TODO: the flipper code needs to be tweaked to reflect that a.) we now have 2 flippers, and b.) they point in opposite directions
+        // also the servo position
         //float flipper_position = gamepad2.right_trigger;
         //Servo.Direction flipper_direction = flipperServo.getDirection();
         //flipper_position = Range.clip(flipper_position, 0, 1);
 
         //flipper_direction = gamepad2.left_bumper ? Servo.Direction.FORWARD : Servo.Direction.REVERSE;
 
-        //flipperServo.setPosition(flipper_position);
-        //flipperServo.setDirection(flipper_direction);
+        //leftFlipperServo.setPosition(flipper_position);
+        //leftFlipperServo.setDirection(flipper_direction);
+        //leftFlipperServo.setPosition(flipper_position);
+        //leftFlipperServo.setDirection(flipper_direction);
 
         telemetry.addData("L Out", left);
         telemetry.addData("R Out", right);

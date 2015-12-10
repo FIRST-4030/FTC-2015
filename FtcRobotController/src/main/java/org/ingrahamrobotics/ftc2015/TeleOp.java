@@ -15,14 +15,15 @@ public class TeleOp extends OpMode {
 
     Servo zipLineLeft;
     Servo zipLineRight;
+    Servo collectorTilt;
 
-    static final double SERVO_LEFT_UP = 0.8;
-    static final double SERVO_RIGHT_UP = 0.25;
-    static final double SERVO_LEFT_DOWN = 0;
-    static final double SERVO_RIGHT_DOWN = 1.0;
-    static final double ARM_RIGHT = .65;
-    static final double ARM_NEUTRAL = .4;
-    static final double ARM_LEFT = .15;
+    static final double SERVO_LEFT_DOWN = 1.0;
+    static final double SERVO_LEFT_UP = 0.0;
+    static final double SERVO_RIGHT_DOWN = 0.0;
+    static final double SERVO_RIGHT_UP = 1.0;
+    static final double ARM_RIGHT = 1.0;
+    static final double ARM_NEUTRAL = 0.5;
+    static final double ARM_LEFT = 0.0;
 
     /*
     g1 L joystick = left tread
@@ -34,6 +35,7 @@ public class TeleOp extends OpMode {
     g2 L bumper = L flag
     g2 R bumper = R flag
     */
+/
 
     Servo collectorTilt;
 
@@ -52,6 +54,7 @@ public class TeleOp extends OpMode {
         zipLineLeft = hardwareMap.servo.get("zip_line_left");
         zipLineRight = hardwareMap.servo.get("zip_line_right");
         collectorTilt = hardwareMap.servo.get("collector_tilt");
+        collectorTilt.setPosition(ARM_NEUTRAL);
     }
 
     @Override
@@ -69,37 +72,38 @@ public class TeleOp extends OpMode {
 
     public void loop() {
 
+        CollectTelemetry();
         // Tank Drive
         float left = -gamepad1.left_stick_y;
         float right = -gamepad1.right_stick_y;
-        right = (float) Range.clip(right, -1, 1);
-        left = (float) Range.clip(left, -1, 1);
+        right = Range.clip(right, -1f, 1f);
+        left = Range.clip(left, -1f, 1f);
         motorRight.setPower(scale_motor_power(right));
         motorLeft.setPower(scale_motor_power(left));
 
-        /*// Lift
+        // Lift
         float lift = gamepad2.left_stick_y;
-        lift = (float) Range.clip(lift, -1, 1);
+        lift = Range.clip(lift, -1f, 1f);
         liftMotor.setPower(scale_motor_power(lift));
-        */
 
-        //Lift Up
-        if(gamepad2.y) {
-            //liftMotor.setTargetPosition();
+        //we also want to be able to turn the collector motor off (it's noisy...)
+        if (!(gamepad1.a || gamepad2.a)) {
+            // Collector Reverse
+            if (gamepad2.dpad_down) {
+                collectorSpinMotor.setPower(-1);
+            } else {
+                collectorSpinMotor.setPower(1);
+            }
+        } else {
+            collectorSpinMotor.setPower(0);
         }
-        //Lift Down
-        if(gamepad2.a) {
-            //liftMotor.setTargetPosition();
-        }
-        //Lift Middle
-        if(gamepad2.b) {
-            //liftMotor.setTargetPosition();
-        }
-
+        //the hopper digs into the floor if it gets tilted while at minimum height
+        //we need to disallow tilting the hopper until the lift arm is extended
+        //75% or more, but we need a motor with an encoder to do this properly
         // Hopper Dump
-        if(gamepad2.dpad_left) {
+        if (gamepad2.x || gamepad2.right_stick_x < -.1) {
             collectorTilt.setPosition(ARM_LEFT);
-        } else if (gamepad2.dpad_right) {
+        } else if (gamepad2.b || gamepad2.right_stick_x > .1) {
             collectorTilt.setPosition(ARM_RIGHT);
         } else {
             collectorTilt.setPosition(ARM_NEUTRAL);
@@ -162,4 +166,17 @@ public class TeleOp extends OpMode {
         return l_scale;
 
     } // scale_motor_power
+
+    //TODO: Create base OpMode that implements telemetry?
+    protected void CollectTelemetry(){
+        telemetry.addData("G1LY", gamepad1.left_stick_y);
+        telemetry.addData("G1RY", gamepad1.right_stick_y);
+        telemetry.addData("G2LY", gamepad2.left_stick_x);
+        telemetry.addData("G2RY", gamepad2.right_stick_y);
+        telemetry.addData("G1X", gamepad1.x);
+        telemetry.addData("G2X", gamepad2.x);
+        telemetry.addData("EL", motorLeft.getCurrentPosition());
+        telemetry.addData("ER", motorRight.getCurrentPosition());
+
+    }
 }
