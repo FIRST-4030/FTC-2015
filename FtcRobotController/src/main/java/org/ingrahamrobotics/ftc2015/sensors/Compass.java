@@ -75,6 +75,6 @@ public class Compass implements SensorEventListener {
     }
 
     public int relativeHeading() {
-        return (int)(x - zeroHeading);
+        return (int)(x - zeroHeading) % 360;
     }
 }
