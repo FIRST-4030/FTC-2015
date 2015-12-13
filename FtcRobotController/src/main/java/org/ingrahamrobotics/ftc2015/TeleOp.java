@@ -17,9 +17,15 @@ public class TeleOp extends OpMode {
     Servo zipLineRight;
     Servo collectorTilt;
 
+    private boolean override;
+    private boolean wasPressed;
+    private int inversionMult = 1;
+
     static final double SERVO_LEFT_DOWN = 1.0;
+    static final double SERVO_LEFT_HALFWAY = 0.5;
     static final double SERVO_LEFT_UP = 0.0;
     static final double SERVO_RIGHT_DOWN = 0.0;
+    static final double SERVO_RIGHT_HALFWAY = 0.5;
     static final double SERVO_RIGHT_UP = 1.0;
     static final double ARM_RIGHT = 1.0;
     static final double ARM_NEUTRAL = 0.5;
@@ -40,7 +46,7 @@ public class TeleOp extends OpMode {
         // Drive Motors
         motorRight = hardwareMap.dcMotor.get("right_drive");
         motorLeft = hardwareMap.dcMotor.get("left_drive");
-        motorRight.setDirection(DcMotor.Direction.REVERSE);
+        motorLeft.setDirection(DcMotor.Direction.REVERSE);
 
         // Lift/Collector Motors
         liftMotor = hardwareMap.dcMotor.get("scoring_arm_motor");
@@ -71,13 +77,24 @@ public class TeleOp extends OpMode {
     }
 
     public void loop() {
+        /*
+        //To invert controls
+        if(gamepad1.y) {
+            wasPressed = true;
+        }
+
+        if(wasPressed && !gamepad1.y) {
+            inversionMult *= -1;
+            wasPressed = false;
+        }
+        */
 
         CollectTelemetry();
         // Tank Drive
         float left = -gamepad1.left_stick_y;
         float right = -gamepad1.right_stick_y;
-        right = Range.clip(right, -1f, 1f);
-        left = Range.clip(left, -1f, 1f);
+        right = Range.clip(right, -1f, 1f) * inversionMult;
+        left = Range.clip(left, -1f, 1f) * inversionMult;
         motorRight.setPower(scale_motor_power(right));
         motorLeft.setPower(scale_motor_power(left));
 
@@ -85,6 +102,10 @@ public class TeleOp extends OpMode {
         float lift = gamepad2.left_stick_y;
         lift = Range.clip(lift, -1f, 1f);
         liftMotor.setPower(scale_motor_power(lift));
+        if(Math.abs(lift) > 0.1) {
+            zipLineLeft.setPosition(SERVO_LEFT_HALFWAY);
+            zipLineRight.setPosition(SERVO_RIGHT_HALFWAY);
+        }
 
         //we also want to be able to turn the collector motor off (it's noisy...)
         if (!(gamepad1.a || gamepad2.a)) {
@@ -103,19 +124,26 @@ public class TeleOp extends OpMode {
         // Hopper Dump
         if (gamepad2.x || gamepad2.right_stick_x < -.1) {
             collectorTilt.setPosition(ARM_LEFT);
+            override = true;
         } else if (gamepad2.b || gamepad2.right_stick_x > .1) {
             collectorTilt.setPosition(ARM_RIGHT);
+            override = true;
         } else {
             collectorTilt.setPosition(ARM_NEUTRAL);
+            override = false;
         }
 
         // Flags
-        if(gamepad2.left_bumper) {
+        if(override) {
+            zipLineLeft.setPosition(SERVO_LEFT_HALFWAY);
+        }else if(gamepad2.left_bumper) {
             zipLineLeft.setPosition(SERVO_LEFT_DOWN);
         } else {
             zipLineLeft.setPosition(SERVO_LEFT_UP);
         }
-        if(gamepad2.right_bumper) {
+        if(override) {
+            zipLineRight.setPosition(SERVO_RIGHT_HALFWAY);
+        } else if(gamepad2.right_bumper) {
             zipLineRight.setPosition(SERVO_RIGHT_DOWN);
         } else {
             zipLineRight.setPosition(SERVO_RIGHT_UP);

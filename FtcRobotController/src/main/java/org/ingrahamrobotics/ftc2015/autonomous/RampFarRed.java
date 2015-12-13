@@ -26,14 +26,22 @@ public class RampFarRed extends LinearOpMode {
         }
 
         drive = new MotorCommands(left, right);
+        //Back up
         DriveParameters bkd7Ft = drive.genDriveToDistance(-1.0f, 12 * 7 * MotorCommands.TICKS_PER_INCH);
         long startTime = System.currentTimeMillis();
         int position = left.getCurrentPosition();
         do {
             drive.driveLoop(bkd7Ft, startTime, position);
         } while(!drive.isFinished());
+        //Turn
         DriveParameters trn50R = drive.genTurnToAngle(1.0f, 50, true);
-        //INSERT DRIVE LOOP WITH NEW STARTTIME AND POSITION//
+        startTime = System.currentTimeMillis();
+        position = left.getCurrentPosition();
+        drive.resetCompass();
+        do {
+            drive.driveLoop(trn50R, startTime, position);
+        } while(!drive.isFinished());
+        //Go up ramp
         DriveParameters frd5Ft = drive.genDriveToDistance(1.0f, 12 * 5 * MotorCommands.TICKS_PER_INCH);
         startTime = System.currentTimeMillis();
         position = left.getCurrentPosition();
