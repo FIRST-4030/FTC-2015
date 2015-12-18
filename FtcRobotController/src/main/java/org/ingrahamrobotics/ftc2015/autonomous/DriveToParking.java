@@ -28,7 +28,7 @@ public class DriveToParking extends LinearOpMode {
 
         // Drive forward into parking zone
         drive = new MotorCommands(left, right);
-        DriveParameters frd8Ft = drive.genDriveToDistance(1.0f, 12 * 8 * MotorCommands.TICKS_PER_INCH);
+        DriveParameters frd8Ft = drive.genDriveToDistance(1.0f, (int) (12 * 7.8 * MotorCommands.TICKS_PER_INCH));
         //maybe add some way to generate these on your own? Some sort of method.
         //Would require quite a bit of restructuring: do later
         long startTime = System.currentTimeMillis();
