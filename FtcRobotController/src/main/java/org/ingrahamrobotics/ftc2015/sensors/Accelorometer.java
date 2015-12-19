@@ -28,13 +28,13 @@ public class Accelorometer implements SensorEventListener {
 
     public void start() {
         sensorManager.registerListener(this,
-                sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
+                sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
                 SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     public void stop() {
         sensorManager.unregisterListener(this,
-                sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION));
+                sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR));
     }
 
     @Override

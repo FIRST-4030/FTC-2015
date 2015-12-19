@@ -7,7 +7,7 @@ import org.ingrahamrobotics.ftc2015.sensors.Accelorometer;
 /**
  * Created by Robotics on 12/18/2015.
  */
-public class AccelorometerTest extends OpMode {
+public class AccelerometerTest extends OpMode {
 
     public Accelorometer accelorometer;
 

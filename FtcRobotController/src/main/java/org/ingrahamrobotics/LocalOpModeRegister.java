@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import org.ingrahamrobotics.ftc2015.autonomous.DriveToParking;
 import org.ingrahamrobotics.ftc2015.autonomous.RampFarBlue;
 import org.ingrahamrobotics.ftc2015.autonomous.RampFarRed;
-import org.ingrahamrobotics.test.AccelorometerTest;
+import org.ingrahamrobotics.test.AccelerometerTest;
 import org.ingrahamrobotics.test.AutonomousTest;
 import org.ingrahamrobotics.ftc2015.TeleOp;
 import org.ingrahamrobotics.test.ColorSensorTest;
@@ -26,7 +26,7 @@ public class LocalOpModeRegister {
 
         if (true) {
             manager.register("Compass Test", CompassTest.class);
-            manager.register("Accelorometer Test", AccelorometerTest.class);
+            manager.register("Accelorometer Test", AccelerometerTest.class);
             manager.register("PhoneSensorTest", PhoneSensorTest.class);
         }
 
