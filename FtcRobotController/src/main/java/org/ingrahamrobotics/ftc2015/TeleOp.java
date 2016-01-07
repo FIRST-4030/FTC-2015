@@ -32,7 +32,7 @@ public class TeleOp extends OpMode {
     static final double SERVO_RIGHT_HALFWAY = 0.5;
     static final double SERVO_RIGHT_UP = 1.0;
     static final double ARM_RIGHT = 1.0;
-    static final double ARM_NEUTRAL = 0.5;
+    static final double ARM_NEUTRAL = 0.675;
     static final double ARM_LEFT = 0.0;
 
     // Enable/Disable all encoder/switch based lift functions
