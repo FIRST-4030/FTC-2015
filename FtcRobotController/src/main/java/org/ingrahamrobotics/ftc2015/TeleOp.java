@@ -2,8 +2,11 @@ package org.ingrahamrobotics.ftc2015;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
+
+import org.ingrahamrobotics.ftc2015.drive.LiftControl;
 
 public class TeleOp extends OpMode {
 
@@ -12,6 +15,7 @@ public class TeleOp extends OpMode {
 
     DcMotor liftMotor;
     DcMotor collectorSpinMotor;
+    DigitalChannel switch_;
 
     Servo zipLineLeft;
     Servo zipLineRight;
@@ -30,6 +34,9 @@ public class TeleOp extends OpMode {
     static final double ARM_RIGHT = 1.0;
     static final double ARM_NEUTRAL = 0.5;
     static final double ARM_LEFT = 0.0;
+
+    // Enable/Disable all encoder/switch based lift functions
+    static final boolean AUTO_LIFT = false;
 
     /*
     g1 L joystick = left tread
@@ -52,6 +59,9 @@ public class TeleOp extends OpMode {
         liftMotor = hardwareMap.dcMotor.get("scoring_arm_motor");
         liftMotor.setDirection(DcMotor.Direction.REVERSE);
         collectorSpinMotor = hardwareMap.dcMotor.get("collector_spin_motor");
+        if (AUTO_LIFT) {
+            switch_ = hardwareMap.digitalChannel.get("switch");
+        }
 
         // Servos
         zipLineLeft = hardwareMap.servo.get("zip_line_left");
@@ -105,6 +115,13 @@ public class TeleOp extends OpMode {
         if(Math.abs(lift) > 0.1) {
             zipLineLeft.setPosition(SERVO_LEFT_HALFWAY);
             zipLineRight.setPosition(SERVO_RIGHT_HALFWAY);
+        }
+
+        if (AUTO_LIFT) {
+            if (gamepad1.y) {
+                LiftControl liftControl = new LiftControl(liftMotor, switch_);
+                liftControl.zeroEncoders();
+            }
         }
 
         //we also want to be able to turn the collector motor off (it's noisy...)
@@ -205,6 +222,6 @@ public class TeleOp extends OpMode {
         telemetry.addData("G2X", gamepad2.x);
         telemetry.addData("EL", motorLeft.getCurrentPosition());
         telemetry.addData("ER", motorRight.getCurrentPosition());
-
+        if (AUTO_LIFT) { telemetry.addData("Encoder Lift", liftMotor.getCurrentPosition()); }
     }
 }
