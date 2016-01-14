@@ -20,17 +20,24 @@ public class TeleOp extends OpMode {
     Servo zipLineLeft;
     Servo zipLineRight;
     Servo collectorTilt;
+    Servo hook_servo;
 
-    private boolean override;
+    private boolean collectorIsTilting;
+    enum CollectorTiltDirection {
+        Left,
+        Neutral,
+        Right
+    }
+    private CollectorTiltDirection currentTiltDirection = CollectorTiltDirection.Neutral;
     private boolean wasPressed;
     private int inversionMult = 1;
 
     static final double SERVO_LEFT_DOWN = 1.0;
     static final double SERVO_LEFT_HALFWAY = 0.5;
-    static final double SERVO_LEFT_UP = 0.0;
+    static final double SERVO_LEFT_UP = 0.05;
     static final double SERVO_RIGHT_DOWN = 0.0;
     static final double SERVO_RIGHT_HALFWAY = 0.5;
-    static final double SERVO_RIGHT_UP = 1.0;
+    static final double SERVO_RIGHT_UP = 0.95;
     static final double ARM_RIGHT = 1.0;
     static final double ARM_NEUTRAL = 0.675;
     static final double ARM_LEFT = 0.0;
@@ -71,6 +78,9 @@ public class TeleOp extends OpMode {
 
         collectorTilt = hardwareMap.servo.get("collector_tilt");
         collectorTilt.setPosition(ARM_NEUTRAL);
+
+        hook_servo = hardwareMap.servo.get("hook_servo");
+        hook_servo.setPosition(0);
     }
 
     @Override
@@ -139,31 +149,51 @@ public class TeleOp extends OpMode {
         //we need to disallow tilting the hopper until the lift arm is extended
         //75% or more, but we need a motor with an encoder to do this properly
         // Hopper Dump
+        //calculate what's happening first, then execute them in the order needed
         if (gamepad2.x || gamepad2.right_stick_x < -.1) {
-            collectorTilt.setPosition(ARM_LEFT);
-            override = true;
+            collectorIsTilting = true;
+            currentTiltDirection = CollectorTiltDirection.Left;
         } else if (gamepad2.b || gamepad2.right_stick_x > .1) {
-            collectorTilt.setPosition(ARM_RIGHT);
-            override = true;
+            collectorIsTilting = true;
+            currentTiltDirection = CollectorTiltDirection.Right;
         } else {
-            collectorTilt.setPosition(ARM_NEUTRAL);
-            override = false;
+            collectorIsTilting = false;
+            currentTiltDirection = CollectorTiltDirection.Neutral;
         }
 
-        // Flags
-        if(override) {
-            zipLineLeft.setPosition(SERVO_LEFT_HALFWAY);
-        }else if(gamepad2.left_bumper) {
-            zipLineLeft.setPosition(SERVO_LEFT_DOWN);
+        if(collectorIsTilting) {
+            switch (currentTiltDirection) {
+                case Left:
+                    zipLineRight.setPosition(SERVO_RIGHT_UP);
+                    zipLineLeft.setPosition(SERVO_LEFT_HALFWAY);
+                    collectorTilt.setPosition(ARM_LEFT);
+                    break;
+                case Right:
+                    zipLineRight.setPosition(SERVO_RIGHT_HALFWAY);
+                    zipLineLeft.setPosition(SERVO_LEFT_UP);
+                    collectorTilt.setPosition(ARM_RIGHT);
+                    break;
+                default:
+                    collectorTilt.setPosition(ARM_NEUTRAL);
+                    break;
+            }
         } else {
-            zipLineLeft.setPosition(SERVO_LEFT_UP);
+            collectorTilt.setPosition(ARM_NEUTRAL);
+            if(gamepad2.left_bumper) {
+                zipLineLeft.setPosition(SERVO_LEFT_DOWN);
+            } else {
+                zipLineLeft.setPosition(SERVO_LEFT_UP);
+            }
+            if(gamepad2.right_bumper) {
+                zipLineRight.setPosition(SERVO_RIGHT_DOWN);
+            } else {
+                zipLineRight.setPosition(SERVO_RIGHT_UP);
+            }
         }
-        if(override) {
-            zipLineRight.setPosition(SERVO_RIGHT_HALFWAY);
-        } else if(gamepad2.right_bumper) {
-            zipLineRight.setPosition(SERVO_RIGHT_DOWN);
-        } else {
-            zipLineRight.setPosition(SERVO_RIGHT_UP);
+
+        //hook servo
+        if (gamepad1.x){
+            hook_servo.setPosition(1f);
         }
     }
 
