@@ -8,8 +8,10 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.ingrahamrobotics.ftc2015.drive.LiftControl;
 
-public class TeleOp extends OpMode {
-
+/**
+ * Created by robotics on 1/20/2016.
+ */
+public class TeleOp_Blue extends OpMode {
     DcMotor motorRight;
     DcMotor motorLeft;
 
@@ -150,9 +152,9 @@ public class TeleOp extends OpMode {
         //75% or more, but we need a motor with an encoder to do this properly
         // Hopper Dump
         //calculate what's happening first, then execute them in the order needed
-        if (gamepad2.b || gamepad2.right_stick_x > .1) { //see if this change is too unnatural, can have different buttons
+        if (gamepad2.b || gamepad2.right_stick_x > .1) {
             collectorIsTilting = true;
-            currentTiltDirection = CollectorTiltDirection.Right;
+            currentTiltDirection = CollectorTiltDirection.Left;
         } else {
             collectorIsTilting = false;
             currentTiltDirection = CollectorTiltDirection.Neutral;
