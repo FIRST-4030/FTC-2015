@@ -12,12 +12,14 @@ import org.ingrahamrobotics.ftc2015.drive.LiftControl;
  * Created by robotics on 1/20/2016.
  */
 public class TeleOp_Blue extends OpMode {
+
     DcMotor motorRight;
     DcMotor motorLeft;
 
     DcMotor liftMotor;
     DcMotor collectorSpinMotor;
     DigitalChannel switch_;
+    boolean liftMoving;
 
     Servo zipLineLeft;
     Servo zipLineRight;
@@ -127,6 +129,9 @@ public class TeleOp_Blue extends OpMode {
         if(Math.abs(lift) > 0.1) {
             zipLineLeft.setPosition(SERVO_LEFT_HALFWAY);
             zipLineRight.setPosition(SERVO_RIGHT_HALFWAY);
+            liftMoving = true;
+        } else {
+            liftMoving = false;
         }
 
         if (AUTO_LIFT) {
@@ -152,7 +157,7 @@ public class TeleOp_Blue extends OpMode {
         //75% or more, but we need a motor with an encoder to do this properly
         // Hopper Dump
         //calculate what's happening first, then execute them in the order needed
-        if (gamepad2.b || gamepad2.right_stick_x > .1) {
+        if (gamepad2.b || gamepad2.right_stick_x > .1) { //see if this change is too unnatural, can have different buttons
             collectorIsTilting = true;
             currentTiltDirection = CollectorTiltDirection.Left;
         } else {
@@ -163,13 +168,9 @@ public class TeleOp_Blue extends OpMode {
         if(collectorIsTilting) {
             switch (currentTiltDirection) {
                 case Left:
-                    zipLineRight.setPosition(SERVO_RIGHT_UP);
-                    zipLineLeft.setPosition(SERVO_LEFT_HALFWAY);
                     collectorTilt.setPosition(ARM_LEFT);
                     break;
                 case Right:
-                    zipLineRight.setPosition(SERVO_RIGHT_HALFWAY);
-                    zipLineLeft.setPosition(SERVO_LEFT_UP);
                     collectorTilt.setPosition(ARM_RIGHT);
                     break;
                 default:
@@ -178,12 +179,12 @@ public class TeleOp_Blue extends OpMode {
             }
         } else {
             collectorTilt.setPosition(ARM_NEUTRAL);
-            if(gamepad2.left_bumper) {
+            if(gamepad2.left_bumper && !liftMoving) {
                 zipLineLeft.setPosition(SERVO_LEFT_DOWN);
             } else {
                 zipLineLeft.setPosition(SERVO_LEFT_UP);
             }
-            if(gamepad2.right_bumper) {
+            if(gamepad2.right_bumper && !liftMoving) {
                 zipLineRight.setPosition(SERVO_RIGHT_DOWN);
             } else {
                 zipLineRight.setPosition(SERVO_RIGHT_UP);

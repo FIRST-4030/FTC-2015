@@ -84,16 +84,7 @@ public class MotorCommands {
     //Returns false if there's an error
     //MAY NEED TO ADD A HEADING PARAMETER//
     public boolean driveLoop(DriveParameters parameters, long startTime, int position) {
-        //Makes sure that the compass is ready before driving, as it will be needed
-        if(!compassReady) {
-            if (compass.ready()) {
-                compass.reset();
-                compassReady = true;
-            }
-            else {
-                //return false;
-            }
-        }
+        //can add compass back in here if necessary
         isFinished = false;
         //Get variables for use
         float power = parameters.getPower();
@@ -101,6 +92,10 @@ public class MotorCommands {
         int goalPosition = (int) (power / Math.abs(power) * distance) + position;
         double turnAngle = parameters.getTurnAngle();
         boolean isToRight = parameters.isToRight();
+        //If a turn angle and distance are given, turning will be the default action
+        if(distance != DriveParameters.DEF_DISTANCE && turnAngle != DriveParameters.DEF_ANGLE) {
+            distance = DriveParameters.DEF_DISTANCE;
+        }
         setMotorPowerH(power, turnAngle, isToRight);
         //Conditions to stop
         if(power == 0) {
@@ -115,7 +110,8 @@ public class MotorCommands {
                 finish();
             }
         } else if(turnAngle != DriveParameters.DEF_ANGLE) {
-            int turn = Math.abs(compass.relativeHeading());
+            //get turn angle from gyroscope
+            int turn = 0; //filler code
             if(turn <= turnAngle + 5 && turn >= turnAngle - 5) {
                 finish();
             }
