@@ -18,7 +18,7 @@ public class MotorCommands {
     Compass compass;
     private boolean isFinished;
     private boolean compassReady;
-    public static final int TICKS_PER_INCH = 250;
+    public static final int TICKS_PER_INCH = 194;
 
     public MotorCommands(DcMotor left, DcMotor right) {
         leftMotor = left;

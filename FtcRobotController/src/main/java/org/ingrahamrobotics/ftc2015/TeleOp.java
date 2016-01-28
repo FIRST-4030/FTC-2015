@@ -34,10 +34,10 @@ public class TeleOp extends OpMode {
     private int inversionMult = 1;
 
     static final double SERVO_LEFT_DOWN = 1.0;
-    static final double SERVO_LEFT_HALFWAY = 0.5;
+    static final double SERVO_LEFT_HALFWAY = 0.7;
     static final double SERVO_LEFT_UP = 0.05;
     static final double SERVO_RIGHT_DOWN = 0.0;
-    static final double SERVO_RIGHT_HALFWAY = 0.5;
+    static final double SERVO_RIGHT_HALFWAY = 0.3;
     static final double SERVO_RIGHT_UP = 0.95;
     static final double ARM_RIGHT = 1.0;
     static final double ARM_NEUTRAL = 0.675;
@@ -45,6 +45,9 @@ public class TeleOp extends OpMode {
 
     // Enable/Disable all encoder/switch based lift functions
     static final boolean AUTO_LIFT = false;
+
+    private boolean switchMode = false;
+    private boolean collectorOff = false;
 
     /*
     g1 L joystick = left tread
@@ -124,8 +127,6 @@ public class TeleOp extends OpMode {
         lift = Range.clip(lift, -1f, 1f);
         liftMotor.setPower(scale_motor_power(lift));
         if(Math.abs(lift) > 0.1) {
-            zipLineLeft.setPosition(SERVO_LEFT_HALFWAY);
-            zipLineRight.setPosition(SERVO_RIGHT_HALFWAY);
             liftMoving = true;
         } else {
             liftMoving = false;
@@ -139,16 +140,29 @@ public class TeleOp extends OpMode {
         }
 
         //we also want to be able to turn the collector motor off (it's noisy...)
+        //uses a toggle
         if (!(gamepad1.a || gamepad2.a)) {
-            // Collector Reverse
-            if (gamepad2.dpad_down) {
-                collectorSpinMotor.setPower(-1);
-            } else {
-                collectorSpinMotor.setPower(1);
+            if(!collectorOff) {
+                // Collector Reverse
+                if (gamepad2.dpad_down) {
+                    collectorSpinMotor.setPower(-1);
+                } else {
+                    collectorSpinMotor.setPower(1);
+                }
             }
         } else {
+            switchMode = true;
+        }
+
+        if(switchMode && !(gamepad1.a || gamepad2.a)) {
+            collectorOff = !collectorOff;
+            switchMode = false;
+        }
+
+        if(collectorOff) {
             collectorSpinMotor.setPower(0);
         }
+
         //the hopper digs into the floor if it gets tilted while at minimum height
         //we need to disallow tilting the hopper until the lift arm is extended
         //75% or more, but we need a motor with an encoder to do this properly
@@ -176,16 +190,22 @@ public class TeleOp extends OpMode {
             }
         } else {
             collectorTilt.setPosition(ARM_NEUTRAL);
-            if(gamepad2.left_bumper && !liftMoving) {
-                zipLineLeft.setPosition(SERVO_LEFT_DOWN);
-            } else {
-                zipLineLeft.setPosition(SERVO_LEFT_UP);
-            }
-            if(gamepad2.right_bumper && !liftMoving) {
-                zipLineRight.setPosition(SERVO_RIGHT_DOWN);
-            } else {
-                zipLineRight.setPosition(SERVO_RIGHT_UP);
-            }
+        }
+
+        //Changing wiper position
+        if(gamepad2.left_bumper) {
+            zipLineLeft.setPosition(SERVO_LEFT_DOWN);
+        } else if(!liftMoving) {
+            zipLineLeft.setPosition(SERVO_LEFT_UP);
+        } else {
+            zipLineRight.setPosition(SERVO_RIGHT_HALFWAY);
+        }
+        if(gamepad2.right_bumper) {
+            zipLineRight.setPosition(SERVO_RIGHT_DOWN);
+        } else if(!liftMoving) {
+            zipLineRight.setPosition(SERVO_RIGHT_UP);
+        } else {
+            zipLineRight.setPosition(SERVO_RIGHT_HALFWAY);
         }
 
         //hook servo

@@ -49,6 +49,9 @@ public class TeleOp_Blue extends OpMode {
     // Enable/Disable all encoder/switch based lift functions
     static final boolean AUTO_LIFT = false;
 
+    private boolean switchMode = false;
+    private boolean collectorOff = false;
+
     /*
     g1 L joystick = left tread
     g1 R joystick = right tread
@@ -142,16 +145,29 @@ public class TeleOp_Blue extends OpMode {
         }
 
         //we also want to be able to turn the collector motor off (it's noisy...)
+        //uses a toggle
         if (!(gamepad1.a || gamepad2.a)) {
-            // Collector Reverse
-            if (gamepad2.dpad_down) {
-                collectorSpinMotor.setPower(-1);
-            } else {
-                collectorSpinMotor.setPower(1);
+            if(!collectorOff) {
+                // Collector Reverse
+                if (gamepad2.dpad_down) {
+                    collectorSpinMotor.setPower(-1);
+                } else {
+                    collectorSpinMotor.setPower(1);
+                }
             }
         } else {
+            switchMode = true;
+        }
+
+        if(switchMode && !(gamepad1.a || gamepad2.a)) {
+            collectorOff = !collectorOff;
+            switchMode = false;
+        }
+
+        if(collectorOff) {
             collectorSpinMotor.setPower(0);
         }
+
         //the hopper digs into the floor if it gets tilted while at minimum height
         //we need to disallow tilting the hopper until the lift arm is extended
         //75% or more, but we need a motor with an encoder to do this properly
