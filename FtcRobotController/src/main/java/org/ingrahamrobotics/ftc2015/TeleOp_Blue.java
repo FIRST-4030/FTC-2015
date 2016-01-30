@@ -34,10 +34,10 @@ public class TeleOp_Blue extends OpMode {
     private int inversionMult = 1;
 
     static final double SERVO_LEFT_DOWN = 1.0;
-    static final double SERVO_LEFT_HALFWAY = 0.7;
+    static final double SERVO_LEFT_HALFWAY = 0.25;
     static final double SERVO_LEFT_UP = 0.05;
     static final double SERVO_RIGHT_DOWN = 0.0;
-    static final double SERVO_RIGHT_HALFWAY = 0.3;
+    static final double SERVO_RIGHT_HALFWAY = 0.75;
     static final double SERVO_RIGHT_UP = 0.95;
     static final double ARM_RIGHT = 1.0;
     static final double ARM_NEUTRAL = 0.675;
