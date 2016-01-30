@@ -198,7 +198,7 @@ public class TeleOp_Blue extends OpMode {
         } else if(!liftMoving) {
             zipLineLeft.setPosition(SERVO_LEFT_UP);
         } else {
-            zipLineRight.setPosition(SERVO_RIGHT_HALFWAY);
+            zipLineLeft.setPosition(SERVO_LEFT_HALFWAY);
         }
         if(gamepad2.right_bumper) {
             zipLineRight.setPosition(SERVO_RIGHT_DOWN);
