@@ -8,9 +8,6 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.ingrahamrobotics.ftc2015.drive.LiftControl;
 
-/**
- * Created by robotics on 1/20/2016.
- */
 public class TeleOp_Blue extends OpMode {
 
     DcMotor motorRight;
@@ -37,10 +34,10 @@ public class TeleOp_Blue extends OpMode {
     private int inversionMult = 1;
 
     static final double SERVO_LEFT_DOWN = 1.0;
-    static final double SERVO_LEFT_HALFWAY = 0.5;
+    static final double SERVO_LEFT_HALFWAY = 0.7;
     static final double SERVO_LEFT_UP = 0.05;
     static final double SERVO_RIGHT_DOWN = 0.0;
-    static final double SERVO_RIGHT_HALFWAY = 0.5;
+    static final double SERVO_RIGHT_HALFWAY = 0.3;
     static final double SERVO_RIGHT_UP = 0.95;
     static final double ARM_RIGHT = 1.0;
     static final double ARM_NEUTRAL = 0.675;
@@ -130,8 +127,6 @@ public class TeleOp_Blue extends OpMode {
         lift = Range.clip(lift, -1f, 1f);
         liftMotor.setPower(scale_motor_power(lift));
         if(Math.abs(lift) > 0.1) {
-            zipLineLeft.setPosition(SERVO_LEFT_HALFWAY);
-            zipLineRight.setPosition(SERVO_RIGHT_HALFWAY);
             liftMoving = true;
         } else {
             liftMoving = false;
@@ -195,16 +190,22 @@ public class TeleOp_Blue extends OpMode {
             }
         } else {
             collectorTilt.setPosition(ARM_NEUTRAL);
-            if(gamepad2.left_bumper && !liftMoving) {
-                zipLineLeft.setPosition(SERVO_LEFT_DOWN);
-            } else {
-                zipLineLeft.setPosition(SERVO_LEFT_UP);
-            }
-            if(gamepad2.right_bumper && !liftMoving) {
-                zipLineRight.setPosition(SERVO_RIGHT_DOWN);
-            } else {
-                zipLineRight.setPosition(SERVO_RIGHT_UP);
-            }
+        }
+
+        //Changing wiper position
+        if(gamepad2.left_bumper) {
+            zipLineLeft.setPosition(SERVO_LEFT_DOWN);
+        } else if(!liftMoving) {
+            zipLineLeft.setPosition(SERVO_LEFT_UP);
+        } else {
+            zipLineRight.setPosition(SERVO_RIGHT_HALFWAY);
+        }
+        if(gamepad2.right_bumper) {
+            zipLineRight.setPosition(SERVO_RIGHT_DOWN);
+        } else if(!liftMoving) {
+            zipLineRight.setPosition(SERVO_RIGHT_UP);
+        } else {
+            zipLineRight.setPosition(SERVO_RIGHT_HALFWAY);
         }
 
         //hook servo
