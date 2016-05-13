@@ -3,6 +3,7 @@ package org.ingrahamrobotics;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 
 import org.ingrahamrobotics.ftc2015.TeleOp_Blue;
+import org.ingrahamrobotics.ftc2015.TeleOp_Both;
 import org.ingrahamrobotics.ftc2015.autonomous.DriveAFoot;
 import org.ingrahamrobotics.ftc2015.autonomous.DriveToParking;
 import org.ingrahamrobotics.ftc2015.autonomous.DriveToParkingWStops;
@@ -24,6 +25,7 @@ public class LocalOpModeRegister {
     public LocalOpModeRegister(OpModeManager manager) {
         manager.register("TeleOp Red", TeleOp.class);
         manager.register("TeleOp Blue", TeleOp_Blue.class);
+        manager.register("TeleOp Both", TeleOp_Both.class);
         manager.register("AutoPark", DriveToParkingWStops.class);
         manager.register("AutoRampCloseR", RampFarRed.class);
         manager.register("AutoRampCloseB", RampFarBlue.class);
